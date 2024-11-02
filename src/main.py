@@ -6,6 +6,7 @@ pygame.init()
 screen = pygame.display.set_mode((800, 540))
 clock = pygame.time.Clock()
 running = True
+bg = pygame.image.load('./assests/test_bg.jpeg')
 
 while running:
     # poll for events
@@ -15,7 +16,7 @@ while running:
             running = False
 
     # fill the screen with a color to wipe away anything from last frame
-    screen.fill("purple")
+    screen.blit(bg, (0, 0))
 
     # RENDER YOUR GAME HERE
 
