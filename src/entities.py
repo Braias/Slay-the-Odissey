@@ -1,11 +1,13 @@
 import pygame
+from cards import Deck
 
 
 class Entity():
-    def __init__(self, life: int, deck: Deck, sprite: pygame.image, name: str, energy: int):
+    def __init__(self, max_hp: int, deck: Deck, sprite: pygame.image, name: str, energy: int):
         self.defense = 0
         self.is_alive = True
-        self.life = life
+        self.current_life = max_hp
+        self.max_hp = max_hp
         self.deck = deck
         self.sprite = sprite
         self.name = name
@@ -22,15 +24,3 @@ class Ulisses():
         self.level = 0
         self.xp = 0
         self.coins = 0
-
-
-class Deck():
-    def __init__(self):
-        self.hand = []
-        self.draw_pile = []
-        self.discard_pile = []
-
-    def shuffle(self):
-        # TODO
-
-        return hand
