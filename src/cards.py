@@ -67,10 +67,11 @@ class Card(ABC):
 
     @property
     @abstractmethod
-    def apply_card(): ...
+    def check_target(): ...
 
     @abstractmethod
-    def check_target(): ...
+    def apply_card(): ...
+
 
 class AttackCard(Card):
     """
@@ -116,10 +117,6 @@ class AttackCard(Card):
         self._damage = damage
 
     @property        
-    def apply_card(self):
-        self._card_user.energy -= self._cost
-        self._target.current_life -= self._damage
-    
     def check_target(self):
         try:
             if self._target == self._card_user:
@@ -127,17 +124,18 @@ class AttackCard(Card):
             #TODO criar classe de erros específicos de aplicação de cartas
         except:
             pass
+        
+    def apply_card(self):
+        self._card_user.energy -= self._cost
+        self._target.current_life -= self._damage
+    
 
 class DefenseCard(Card):
     def __init__(self, name, description, cost, target, card_user, defense: int, type="defense", effect=None):
         super().__init__(name, description, cost, target, card_user, type, effect)
         self._defense = defense
      
-    @property        
-    def apply_card(self):
-        self._card_user.energy -= self._cost
-        self._target.defense += self._defense
-
+    @property      
     def check_target(self):
         try:
             if self._target != self._card_user:
@@ -145,3 +143,7 @@ class DefenseCard(Card):
             #TODO criar classe de erros específicos de aplicação de cartas
         except:
             pass
+
+    def apply_card(self):
+        self._card_user.energy -= self._cost
+        self._target.defense += self._defense
