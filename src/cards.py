@@ -7,11 +7,13 @@ class Card(ABC):
                  cost: int,
                  type: str,
                  card_user: entities.Entity, 
-                 target: entities.Entity):
+                 target: entities.Entity,
+                 effect = None,):
         self._name = name
         self._description = description
         self._cost = cost
         self._type = type
+        self._effect = effect
         self._card_user = card_user
         self._target = target
     
@@ -24,7 +26,7 @@ class Card(ABC):
                 # lógica para a ação de jogar dos inimigos (passar pra próxima carta caso não tenha energia)
                 pass
             else:
-                # lógica para ação do jogador (não conseguir selecionar a carta se não tiver energia)
+                # lógica para ação do jogador (não conseguir selecionar a carta se não tiver energia e passar para resseleção)
                 pass                           
 
     @property
@@ -32,12 +34,37 @@ class Card(ABC):
     def apply_card(): ...
 
 class AttackCard(Card):
-    def __init__(self, name, description, cost, target, card_user, damage: int, effect: str, type="attack"):
-        super().__init__(name, description, cost, target, card_user, type)
+    def __init__(self, name, description, cost, target, card_user, effect, damage: int, type="attack"):
+        super().__init__(name, description, cost, target, card_user, type, effect)
         self._damage = damage
-        self._effect = effect
+
+    def check_target(self):
+        try:
+            if self._target == self._card_user:
+                raise KeyError  # esse card não pode ser aplicado em si mesmo
+            #TODO criar classe de erros específicos de aplicação de cartas
+        except:
+            pass
 
     @property        
     def apply_card(self):
         self._card_user.energy -= self._cost
         self._target.current_life -= self._damage
+
+class DefenseCard(Card):
+    def __init__(self, name, description, cost, target, card_user, defense: int, type="defense", effect=None):
+        super().__init__(name, description, cost, target, card_user, type, effect)
+        self._defense = defense
+
+    def check_target(self):
+        try:
+            if self._target != self._card_user:
+                raise KeyError  # esse card só pode ser aplicado em si mesmo
+            #TODO criar classe de erros específicos de aplicação de cartas
+        except:
+            pass
+                
+    @property        
+    def apply_card(self):
+        self._card_user.energy -= self._cost
+        self._target.defense += self._defense

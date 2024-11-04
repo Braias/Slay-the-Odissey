@@ -1,7 +1,7 @@
 # Example file showing a basic pygame "game loop"
 import pygame
 import entities
-from cards import Deck
+from deck import Deck
 
 # pygame setup
 pygame.init()
