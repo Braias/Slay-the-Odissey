@@ -13,7 +13,7 @@ clock = pygame.time.Clock()
 running = True
 
 bg = pygame.image.load('./assests/test_bg.jpeg')
-enemies = []
+enemies = [entities.Enemy()]
 ulisses = entities.Ulisses()
 
 index = True

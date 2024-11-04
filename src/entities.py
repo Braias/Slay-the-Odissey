@@ -44,7 +44,9 @@ class Enemy(Entity):
     Atributos:
         drop_xp (int): Quantidade de experiência que o inimigo dropa na morte
     """
-    def __init__(self, drop_xp: int):
+    def __init__(self, drop_xp: int,max_hp: int, deck: Deck, name: str,
+                  energy: int,x_pos:int,y_pos:int):
+        super().__init__(max_hp,deck,name,energy,x_pos,y_pos)
         self.drop_xp = drop_xp
 
 
