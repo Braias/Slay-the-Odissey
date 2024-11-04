@@ -16,7 +16,8 @@ class Entity():
         name (str): Nome da entidade
         energy (int): Quantidade energia disponivel para aplicar cartas
     """
-    def __init__(self, max_hp: int, deck: Deck, sprite: pygame.image, name: str, energy: int):
+    def __init__(self, max_hp: int, deck: Deck, sprite: pygame.image, name: str,
+                  energy: int,x_pos:int,y_pos:int):
         self.defense = 0
         self.is_alive = True
         self.current_life = max_hp
@@ -25,6 +26,11 @@ class Entity():
         self.sprite = sprite
         self.name = name
         self.energy = energy
+        self.x_pos = x_pos
+        self.y_pos = y_pos
+        
+    def draw_entity(self,screen:pygame.display):
+        pass
 
 
 class Enemy(Entity):
