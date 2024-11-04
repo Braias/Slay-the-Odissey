@@ -1,12 +1,28 @@
 # Example file showing a basic pygame "game loop"
 import pygame
+import entities
+from cards import Deck
+
+class GameAnimationHandler():
+    def draw_entities(self,*args:entities):
+        for entity in args:
+            screen.blit(entity.sprite,entity.rect)
+
+
 
 # pygame setup
 pygame.init()
+
 screen = pygame.display.set_mode((800, 540))
 clock = pygame.time.Clock()
 running = True
+
 bg = pygame.image.load('./assests/test_bg.jpeg')
+enemies = []
+ulisses = entities.Ulisses()
+
+handler = GameAnimationHandler()
+
 index = True
 while running:
     # poll for events
@@ -22,7 +38,7 @@ while running:
     # fill the screen with a color to wipe away anything from last frame
     screen.blit(bg, (0, 0))
     color = colors[int(index)]
-    pygame.draw.rect(screen, color, pygame.Rect(30, 300, 150, 150))
+    handler.draw_entities(ulisses)
     pygame.draw.rect(screen, color, pygame.Rect(450, 300, 150, 150))
     pygame.draw.rect(screen, color, pygame.Rect(620, 300, 150, 150))
 

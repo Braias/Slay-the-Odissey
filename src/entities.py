@@ -2,7 +2,7 @@ import pygame
 from cards import Deck
 
 
-class Entity():
+class Entity:
     """
     Classe que representa uma entidade qualquer no jogo
 
@@ -16,21 +16,23 @@ class Entity():
         name (str): Nome da entidade
         energy (int): Quantidade energia disponivel para aplicar cartas
     """
-    def __init__(self, max_hp: int, deck: Deck, sprite: pygame.image, name: str,
+    def __init__(self, max_hp: int, deck: Deck, name: str,
                   energy: int,x_pos:int,y_pos:int):
         self.defense = 0
         self.is_alive = True
         self.current_life = max_hp
         self.max_hp = max_hp
         self.deck = deck
-        self.sprite = sprite
         self.name = name
+
+        img = pygame.image.load(f'./assests/{self.name}.png')
+        self.sprite = pygame.transform.scale(img,(img.get_width()*2,img.get_height()*2))
+
         self.energy = energy
         self.x_pos = x_pos
         self.y_pos = y_pos
-        
-    def draw_entity(self,screen:pygame.display):
-        pass
+        self.rect = self.sprite.get_rect()
+        self.rect.center = (self.x_pos,self.y_pos)
 
 
 class Enemy(Entity):
@@ -54,6 +56,8 @@ class Ulisses(Entity):
         coins (int): Quantidade de moedas que o personagem possui
     """
     def __init__(self):
+        super().__init__(max_hp=80,deck=Deck(),name="Ulisses",energy=3,x_pos = 80,y_pos = 400)
         self.level = 0
         self.xp = 0
         self.coins = 0
+
