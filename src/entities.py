@@ -4,17 +4,26 @@ from deck import Deck
 
 class Entity:
     """
-    Classe que representa uma entidade qualquer no jogo
+    Classe que representa uma entidade qualquer no jogo, dentre as possibilidades estabelecidas.
 
-    Atributos:
-        defense (int): Valor da defesa da entidade, que reduz o dano recebido
-        is_alive (bool): Indica se a entidade está viva
-        current_life (int): Quantidade de pontos de vida atuais da entidade
-        max_hp (int): Quantidade máxima de pontos de vida da entidade
-        deck (Deck): Conjunto de cartas associado à entidade
-        sprite (pygame.image): Sprite reprsentativo da entidade
-        name (str): Nome da entidade
-        energy (int): Quantidade energia disponivel para aplicar cartas
+    Parâmetros:
+    ----------
+        defense: int
+            Valor da defesa da entidade, que reduz o dano recebido.
+        is_alive: bool
+            Indica se a entidade está viva.
+        current_life: int
+            Quantidade de pontos de vida atuais da entidade
+        max_hp: int
+            Quantidade máxima de pontos de vida da entidade
+        deck: Deck
+            Conjunto de cartas associado à entidade
+        sprite: pygame.image
+            Sprite reprsentativo da entidade
+        name: str
+            Nome da entidade
+        energy: int
+            Quantidade energia disponivel para aplicar cartas
     """
     def __init__(self, max_hp: int, deck: Deck, name: str,
                   energy: int,x_pos:int,y_pos:int):
