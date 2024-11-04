@@ -141,7 +141,12 @@ class AttackCard(Card):
         """
         Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta. Aqui, diminui o HP do alvo escolhido. 
         """
-        self._target.current_life -= self._damage
+        if self._target.defense - self._damage < 0:
+            self._target.defense = 0
+            # Subtrai a diferença entre o dano e a defesa da vida atual do alvo
+            self._target.current_life -= (self._damage - self._target.defense)
+        else:
+            self._target.defense -= self._damage
         super().apply_card()
     
 
