@@ -1,19 +1,43 @@
-import random
+from abc import ABC, abstractmethod
+import entities
 
-class Deck():
-    def __init__(self,draw_pile=[]):
-        self.hand = []
-        self.draw_pile = draw_pile
-        self.discard_pile = []
+class Card(ABC):
+    def __init__(self, name: str, 
+                 description: str, 
+                 cost: int,
+                 type: str,
+                 card_user: entities.Entity, 
+                 target: entities.Entity):
+        self._name = name
+        self._description = description
+        self._cost = cost
+        self._type = type
+        self._card_user = card_user
+        self._target = target
+    
+    def check_energy(self):
+        try:
+            if self._card_user.energy < self._cost:
+                raise ValueError
+        except:
+            if self._card_user.__class__ == entities.Enemy:
+                # lógica para a ação de jogar dos inimigos (passar pra próxima carta caso não tenha energia)
+                pass
+            else:
+                # lógica para ação do jogador (não conseguir selecionar a carta se não tiver energia)
+                pass                           
 
-    def shuffle_and_allocate(self):     
-        # Checamos quantas caratas estão disponíveis
-        cards_to_draw = len(self.draw_pile) 
-        # Caso não temos cartas suficentes para formar uma mão adcionamos do deck de descarte
-        if cards_to_draw < 5: 
-            self.draw_pile+=self.discard_pile
-        random.shuffle(self.draw_pile)
-        hand = self.draw_pile[:5]
-        return hand
+    @property
+    @abstractmethod
+    def apply_card(): ...
 
+class AttackCard(Card):
+    def __init__(self, name, description, cost, target, card_user, damage: int, effect: str, type="attack"):
+        super().__init__(name, description, cost, target, card_user, type)
+        self._damage = damage
+        self._effect = effect
 
+    @property        
+    def apply_card(self):
+        self._card_user.energy -= self._cost
+        self._target.current_life -= self._damage

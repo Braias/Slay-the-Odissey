@@ -1,5 +1,5 @@
 import pygame
-from cards import Deck
+from deck import Deck
 
 
 class Entity:
@@ -62,4 +62,4 @@ class Ulisses(Entity):
         self.level = 0
         self.xp = 0
         self.coins = 0
-
+        
