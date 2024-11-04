@@ -33,6 +33,8 @@ class Entity:
         self.y_pos = y_pos
         self.rect = self.sprite.get_rect()
         self.rect.center = (self.x_pos,self.y_pos)
+    def draw_entity(self,screen:pygame.display):
+        screen.blit(self.sprite,self.rect)
 
 
 class Enemy(Entity):
