@@ -143,8 +143,10 @@ class AttackCard(Card):
         """
         if self._target.defense - self._damage < 0:
             self._target.defense = 0
-            # Adiciona um número negativo a vida do alvo, que é o quanto o dano é maior que a defesa.
-            self._target.current_life += (self._target.defense - self._damage)
+            # Subtrai a diferença entre o dano e a defesa da vida atual do alvo
+            self._target.current_life -= (self._damage - self._target.defense)
+        else:
+            self._target.defense -= self._damage
         super().apply_card()
     
 
