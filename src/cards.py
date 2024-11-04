@@ -118,14 +118,25 @@ class AttackCard(Card):
 
     @property        
     def check_target(self):
+        """
+        Checa a aplicabilidade da carta no alvo escolhido.
+
+        Levanta
+        ------
+        KeyError
+            Na Carta Ataque, impede o usuário de utilizar um ataque em si mesmo.
+        """
         try:
             if self._target == self._card_user:
                 raise KeyError  # esse card não pode ser aplicado em si mesmo
             #TODO criar classe de erros específicos de aplicação de cartas
         except:
             pass
-        
+
     def apply_card(self):
+        """
+        Aplica as funcionalidades da carta no alvo escolhido. Nesse caso, diminui a energia 
+        """
         self._card_user.energy -= self._cost
         self._target.current_life -= self._damage
     
@@ -137,6 +148,14 @@ class DefenseCard(Card):
      
     @property      
     def check_target(self):
+        """
+        Checa a aplicabilidade da carta no alvo escolhido.
+
+        Levanta
+        ------
+        KeyError
+            Na Carta Defesa, impede o usuário de utilizar uma defesa em um inimigo.
+        """
         try:
             if self._target != self._card_user:
                 raise KeyError  # esse card só pode ser aplicado em si mesmo
