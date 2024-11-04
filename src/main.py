@@ -12,8 +12,7 @@ screen = pygame.display.set_mode(SCREEN_DIMENSIONS)
 clock = pygame.time.Clock()
 running = True
 
-bg = pygame.image.load('./assests/test_bg.jpeg')
-enemies = [entities.Enemy()]
+bg = pygame.image.load('./assests/test_bg.png')
 ulisses = entities.Ulisses()
 
 index = True

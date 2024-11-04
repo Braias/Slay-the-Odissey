@@ -1,6 +1,9 @@
 import pygame
 from deck import Deck
+import json
 
+with open(file='./assests/enemies.json',mode='r') as enemy_config:
+    default_enemy_configurations = json.load(enemy_config)
 
 class Entity:
     """
@@ -27,21 +30,25 @@ class Entity:
     """
     def __init__(self, max_hp: int, deck: Deck, name: str,
                   energy: int,x_pos:int,y_pos:int):
-        self.defense = 0
-        self.is_alive = True
-        self.current_life = max_hp
-        self.max_hp = max_hp
-        self.deck = deck
-        self.name = name
+        try:
+            self.defense = 0
+            self.is_alive = True
+            self.current_life = max_hp
+            self.max_hp = max_hp
+            self.deck = deck
+            self.name = name
 
-        img = pygame.image.load(f'./assests/{self.name}.png')
-        self.sprite = pygame.transform.scale(img,(img.get_width()*2,img.get_height()*2))
+            img = pygame.image.load(f'./assests/{self.name}.png')
+            self.sprite = pygame.transform.scale(img,(img.get_width()*2,img.get_height()*2))
 
-        self.energy = energy
-        self.x_pos = x_pos
-        self.y_pos = y_pos
-        self.rect = self.sprite.get_rect()
-        self.rect.center = (self.x_pos,self.y_pos)
+            self.energy = energy
+            self.x_pos = x_pos
+            self.y_pos = y_pos
+            self.rect = self.sprite.get_rect()
+            self.rect.center = (self.x_pos,self.y_pos)
+
+        except FileNotFoundError as error:
+            print(f"{error}: assest of name {self.name} was not found in folder 'assests'")
     def draw_entity(self,screen:pygame.display):
         screen.blit(self.sprite,self.rect)
 
@@ -53,10 +60,7 @@ class Enemy(Entity):
     Atributos:
         drop_xp (int): Quantidade de experiência que o inimigo dropa na morte
     """
-    def __init__(self, drop_xp: int,max_hp: int, deck: Deck, name: str,
-                  energy: int,x_pos:int,y_pos:int):
-        super().__init__(max_hp,deck,name,energy,x_pos,y_pos)
-        self.drop_xp = drop_xp
+
 
 
 class Ulisses(Entity):
