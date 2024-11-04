@@ -70,7 +70,11 @@ class Card(ABC):
     def check_target(): ...
 
     @abstractmethod
-    def apply_card(): ...
+    def apply_card(self):
+        """
+        Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta.
+        """ 
+        self._card_user.energy -= self._cost
 
 
 class AttackCard(Card):
@@ -135,10 +139,10 @@ class AttackCard(Card):
 
     def apply_card(self):
         """
-        Aplica as funcionalidades da carta no alvo escolhido. Nesse caso, diminui a energia 
+        Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta. Aqui, diminui o HP do alvo escolhido. 
         """
-        self._card_user.energy -= self._cost
         self._target.current_life -= self._damage
+        super().apply_card()
     
 
 class DefenseCard(Card):
@@ -154,7 +158,7 @@ class DefenseCard(Card):
         Levanta
         ------
         KeyError
-            Na Carta Defesa, impede o usuário de utilizar uma defesa em um inimigo.
+            Na Carta Defesa, impede o usuário de utilizar defesa em um inimigo.
         """
         try:
             if self._target != self._card_user:
@@ -164,5 +168,8 @@ class DefenseCard(Card):
             pass
 
     def apply_card(self):
-        self._card_user.energy -= self._cost
+        """
+        Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta. Aqui, aumenta a defesa do usuário. 
+        """
         self._target.defense += self._defense
+        super().apply_card()
