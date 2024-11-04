@@ -1,9 +1,23 @@
 import pygame
-import os
-class WorldLevel:
+from entities import Enemy
+
+class CombatLevel:
     def __init__(self,screen:pygame.display,background_name:str,stages:tuple):
-        self.background_img = pygame.image.load(f'./assests/{background_name}.png')
-        self.game_state = 0
-        self.stages = stages
-        self.screen = screen
-        
+        try:
+            self.background_img = pygame.image.load(f'./assests/{background_name}.png')
+            self.game_state = 0
+            self.screen = screen
+            self.staged_enemies = stages[self.game_state]
+            self.instantiated_enemies = []
+        except FileNotFoundError as error:
+            print(f"{error}: background assest not found in 'assests")
+    def draw_level(self):
+        self.screen.blit(self.background_img,(0,0))
+        pygame.draw.rect(self.screen,color='brown',rect=pygame.Rect(0, 540,800,160))
+        self.draw_enemies()
+    def draw_enemies(self):
+        for staged_enemy in self.staged_enemies:
+            self.instantiated_enemies.append(Enemy(name=staged_enemy))
+        for instantiated_enemy in self.instantiated_enemies:
+            instantiated_enemy.draw_entity(screen=self.screen)
+            

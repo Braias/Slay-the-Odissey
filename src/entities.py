@@ -51,7 +51,15 @@ class Enemy(Entity):
     Atributos:
         drop_xp (int): Quantidade de experiência que o inimigo dropa na morte
     """
-
+    def __init__(self, name:str):
+        enemy_info = default_enemy_configurations['enemies'][name]
+        super().__init__(max_hp=enemy_info['max_hp'],
+                         name=name,
+                         energy=enemy_info['energy'],
+                         deck=Deck(),
+                         x_pos=700,
+                         y_pos=375)
+        self.drop_xp = enemy_info['drop_xp']
 
 
 class Ulisses(Entity):
@@ -64,7 +72,7 @@ class Ulisses(Entity):
         coins (int): Quantidade de moedas que o personagem possui
     """
     def __init__(self):
-        super().__init__(max_hp=80,deck=Deck(),name="Ulisses",energy=3,x_pos = 80,y_pos = 400)
+        super().__init__(max_hp=80,deck=Deck(),name="Ulisses",energy=3,x_pos = 80,y_pos = 375)
         self.level = 0
         self.xp = 0
         self.coins = 0

@@ -2,18 +2,19 @@
 import pygame
 import entities
 from deck import Deck
-
+from world_level import CombatLevel
 # pygame setup
 pygame.init()
 
-SCREEN_DIMENSIONS = (800,540)
+SCREEN_DIMENSIONS = (800,700)
 
 screen = pygame.display.set_mode(SCREEN_DIMENSIONS)
 clock = pygame.time.Clock()
 running = True
 
-bg = pygame.image.load('./assests/test_bg.png')
 ulisses = entities.Ulisses()
+
+cl = CombatLevel(screen=screen,background_name='test_bg',stages=(['Fairy'],['Fairy','Fairy']))
 
 index = True
 while running:
@@ -28,12 +29,10 @@ while running:
             
 
     # fill the screen with a color to wipe away anything from last frame
-    screen.blit(bg, (0, 0))
     color = colors[int(index)]
+    cl.draw_level()
     ulisses.draw_entity(screen)
-    pygame.draw.rect(screen, color, pygame.Rect(450, 300, 150, 150))
-    pygame.draw.rect(screen, color, pygame.Rect(620, 300, 150, 150))
-
+    pygame.draw.rect(screen, color, pygame.Rect(440, 300, 150, 150))
     # RENDER YOUR GAME HERE
 
     # flip() the display to put your work on screen
