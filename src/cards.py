@@ -2,6 +2,14 @@ from abc import ABC, abstractmethod
 import entities
 
 class Card(ABC):
+    """
+    Classe para todas as cartas a serem utilizadas nas batalhas do jogo.
+
+    Parâmetros
+    ----------
+    ABC :
+        Classe Mãe de Card. Define a existência de classes abstratas na Mãe, permitindo a criação de conteúdo específico para classe Filho.
+    """
     def __init__(self, name: str, 
                  description: str, 
                  cost: int,
@@ -9,6 +17,26 @@ class Card(ABC):
                  card_user: entities.Entity, 
                  target: entities.Entity,
                  effect = None,):
+        """
+        Inicializa a classe Card.
+
+        Parâmetros
+        ----------
+        name : str
+            Título específico da carta.
+        description : str
+            Descrição da carta, seus efeitos e funcionalidades.
+        cost : int
+            Custo energético da carta perante ao seu uso.
+        type : str
+            Tipo da Carta dentre os definidos: "Attack", "Defense", etc.
+        card_user : entities.Entity
+            Usuário da Carta em questão.
+        target : entities.Entity
+            Entidade nas quais serão aplicadas os efeitos e funcionalidades da carta.
+        effect : str, optional
+            Consequência secundária do uso da carta, default None.
+        """
         self._name = name
         self._description = description
         self._cost = cost
@@ -18,6 +46,14 @@ class Card(ABC):
         self._target = target
     
     def check_energy(self):
+        """
+        Checagem da possibilidade do uso da carta, baseado na disponibilidade de energia no usuário da carta e no custo energético desta.  
+
+        Levanta
+        ------
+        ValueError
+            Se o custo é maior que a energia disponível pelo usuário, impede o uso da carta.
+        """
         try:
             if self._card_user.energy < self._cost:
                 raise ValueError
@@ -34,7 +70,45 @@ class Card(ABC):
     def apply_card(): ...
 
 class AttackCard(Card):
-    def __init__(self, name, description, cost, target, card_user, effect, damage: int, type="attack"):
+    """
+    Classe Filha de Card, referente às cartas de Ataque, que diminuem HP do alvo.
+
+    Parâmetros
+    ----------
+    Card
+        Classe Mãe de AttackCard.
+    """
+    def __init__(self, 
+                 name, 
+                 description, 
+                 cost, 
+                 target, 
+                 card_user, 
+                 effect, 
+                 damage: int, 
+                 type="attack"):
+        """
+        Inicia a classe AttackCard.
+
+        Parâmetros
+        ----------
+        name : str
+            Título específico da carta.
+        description : str
+            Descrição da carta, seus efeitos e funcionalidades.
+        cost : int
+            Custo energético da carta perante ao seu uso.
+        card_user : entities.Entity
+            Usuário da Carta em questão.
+        target : entities.Entity
+            Entidade nas quais serão aplicadas os efeitos e funcionalidades da carta.
+        effect : str, optional
+            Consequência secundária do uso da carta, default None.
+        damage : int
+            Valor de dimuição do HP do alvo.
+        type : str, optional
+            Tipo da Carta dentre os definidos: "Attack", "Defense", etc, por default "attack"
+        """
         super().__init__(name, description, cost, target, card_user, type, effect)
         self._damage = damage
 
