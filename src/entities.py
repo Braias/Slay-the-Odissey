@@ -2,7 +2,7 @@ import pygame
 from deck import Deck
 import json
 
-with open(file='./assests/enemies.json',mode='r') as enemy_config:
+with open(file='./assets/enemies.json',mode='r') as enemy_config:
     default_enemy_configurations = json.load(enemy_config)
 
 class Entity:
@@ -38,18 +38,18 @@ class Entity:
             self.deck = deck
             self.name = name
 
-            img = pygame.image.load(f'./assests/{self.name}.png')
+            img = pygame.image.load(f'./assets/{self.name}.png')
             self.sprite = pygame.transform.scale(img,(150,150))
 
             self.energy = energy
             self.x_pos = x_pos
             self.y_pos = y_pos
             self.rect = self.sprite.get_rect()
-            self.rect.center = (self.x_pos,self.y_pos)
 
         except FileNotFoundError as error:
-            print(f"{error}: assest of name {self.name} was not found in folder 'assests'")
+            print(f"{error}: assest of name {self.name} was not found in folder 'assets'")
     def draw_entity(self,screen:pygame.display):
+        self.rect.center = (self.x_pos,self.y_pos)
         screen.blit(self.sprite,self.rect)
 
 

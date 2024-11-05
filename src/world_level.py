@@ -20,18 +20,18 @@ class CombatLevel:
 
         Parâmetros:
             screen (pygame.display): Tela onde o nível será desenhado
-            background_name (str): Nome da imagem de fundo que esta armazenado em assests
+            background_name (str): Nome da imagem de fundo que esta armazenado em assets
             stages (tuple): tupla de listas contendo os tipos de inimigo do estágio (ex:stages=(['Fairy','Fairy']) -- estágio com duas fadas inimigas)
         """
         try:
-            self.background_img = pygame.image.load(f'./assests/{background_name}.png')
+            self.background_img = pygame.image.load(f'./assets/{background_name}.png')
             self.game_state = 0
             self.screen = screen
             self.stages = stages
             self.staged_enemies = stages[self.game_state]
             self.instantiated_enemies = []
         except FileNotFoundError as error:
-            print(f"{error}: background assest not found in 'assests")
+            print(f"{error}: background assest not found in 'assets")
 
     def draw_level(self):
         """Método responsável por desenhar todo cenario e inimigos do estágio
@@ -44,9 +44,12 @@ class CombatLevel:
         """Método responsável por instanciar inimigos caso nao estejam instanciados e desenhá-los
         na tela do jogador
         """
-        if len(self.staged_enemies) != len(self.instantiated_enemies):
-            for staged_enemy in self.staged_enemies:
+        num_staged_enemies = len(self.staged_enemies)
+        num_instantiated_enemies = len(self.instantiated_enemies)
+        if num_staged_enemies != num_instantiated_enemies:
+            for enemy_index,staged_enemy in enumerate(self.staged_enemies):
                 self.instantiated_enemies.append(Enemy(name=staged_enemy))
+                self.instantiated_enemies[enemy_index].x_pos -= 150*enemy_index
         for instantiated_enemy in self.instantiated_enemies:
             instantiated_enemy.draw_entity(screen=self.screen)
 
@@ -60,4 +63,3 @@ class CombatLevel:
             self.instantiated_enemies = []
         except IndexError as error:
             print(f'{error}: attempted to pass to next stage when no following stage existed')
-                

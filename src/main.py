@@ -14,7 +14,7 @@ running = True
 
 ulisses = entities.Ulisses()
 
-cl = CombatLevel(screen=screen,background_name='test_bg',stages=(['Fairy'],['King']))
+cl = CombatLevel(screen=screen,background_name='test_bg',stages=(['King','Fairy','Fairy'],['King']))
 
 index = True
 while running:
@@ -33,7 +33,7 @@ while running:
     color = colors[int(index)]
     cl.draw_level()
     ulisses.draw_entity(screen)
-    pygame.draw.rect(screen, color, pygame.Rect(440, 300, 150, 150))
+    #pygame.draw.rect(screen, color, pygame.Rect(440, 300, 150, 150))
     # RENDER YOUR GAME HERE
 
     # flip() the display to put your work on screen
