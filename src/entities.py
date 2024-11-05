@@ -9,7 +9,7 @@ class Entity:
     """
     Classe que representa uma entidade qualquer no jogo, dentre as possibilidades estabelecidas.
 
-    Parâmetros:
+    Atributos:
     ----------
         defense: int
             Valor da defesa da entidade, que reduz o dano recebido.
