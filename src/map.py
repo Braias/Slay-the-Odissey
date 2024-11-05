@@ -1,18 +1,8 @@
 """ Módulo responsável pelas mecânicas do mapa do jogo """
 
 
-from abc import ABC, abstractmethod
 from pygame import Surface, draw, display, math
-from typing import Self
-from enum import Enum
-
-
-Point = tuple[int, int]
-
-
-# INFO
-# como escalonar a pixel art???
-# se basear no tamanho da tela é ruim
+from map_node import MapNode, MapNodeType, Point
 
 
 MAP_WIDTH = 400
@@ -21,60 +11,6 @@ SCROLL_SPEED = 2
 MARGIN = 20
 
 COLOR_MAP = (200, 200, 150)
-
-
-class MapNodeType(Enum):
-    BATTLE = 0
-    STORY = 1
-    BOSS = 2
-
-
-class MapNode(ABC):
-    def __init__(self, pos: Point, type: MapNodeType, data):
-        self.pos = pos
-        self.children = []
-        self.type = type
-        self.data = data
-        self.reset_flags()
-
-    def reset_flags(self):
-        self.was_visited = False
-        self.is_available = False
-        self.is_hovered = False
-        self.is_active = False
-
-    def to(self, *args: list[Self]):
-        self.children += args
-        return self
-
-    def render(self, surface: Surface):
-        color = (100, 100, 100)
-        if self.was_visited or self.is_available:
-            color = (0, 0, 0)
-
-        size = 10 if self.is_available else 6
-
-        if self.type == MapNodeType.BATTLE:
-            draw.circle(surface, color, self.pos, size)
-        elif self.type == MapNodeType.STORY:
-            draw.rect(surface, color, (
-                self.pos[0] - size, self.pos[1] - size,
-                size << 1, size << 1
-            ))
-        elif self.type == MapNodeType.BOSS:
-            draw.circle(surface, color, self.pos, size * 3)
-
-        if self.is_hovered: # overlay
-            draw.circle(surface, (140, 140, 100), self.pos, size + 16, width = 4)
-
-    def visit(self):
-        self.was_visited = True
-        self.is_active = True
-        self.is_hovered = False
-        self.is_available = False
-
-        for child in self.children:
-            child.is_available = True
 
 
 class MapView(Surface): # TODO: implicações de herdar Surface
@@ -189,26 +125,19 @@ class MapView(Surface): # TODO: implicações de herdar Surface
 # ------------------------------------
 
 
-def initial_dialogue(): pass
+node = MapNode((230, 400), MapNodeType.STORY, None)
 
-
-def nf(): print("Visited")
-def boss(): print("BOSS")
-
-
-node = MapNode((230, 400), MapNodeType.STORY, nf)
-
-odyssey_map = MapNode((200, 540), MapNodeType.BATTLE, initial_dialogue).to(
-    MapNode((170, 460), MapNodeType.STORY, nf).to(
-        MapNode((150, 360), MapNodeType.BATTLE, nf),
+odyssey_map = MapNode((200, 540), MapNodeType.BATTLE, None).to(
+    MapNode((170, 460), MapNodeType.STORY, None).to(
+        MapNode((150, 360), MapNodeType.BATTLE, None),
         node.to(
-            MapNode((180, 290), MapNodeType.BATTLE, nf).to(
-                MapNode((220, 170), MapNodeType.BOSS, boss)
+            MapNode((180, 290), MapNodeType.BATTLE, None).to(
+                MapNode((220, 170), MapNodeType.BOSS, None)
             )
         )
     ),
-    MapNode((210, 490), MapNodeType.BATTLE, nf).to(
-        MapNode((260, 440), MapNodeType.STORY, nf).to(
+    MapNode((210, 490), MapNodeType.BATTLE, None).to(
+        MapNode((260, 440), MapNodeType.STORY, None).to(
             node
         )
     )
