@@ -2,10 +2,9 @@
 
 
 from abc import ABC, abstractmethod
-from pygame import Surface, draw, display
+from pygame import Surface, draw, display, math
 from typing import Self, Callable
 from enum import Enum
-import math
 
 
 Point = tuple[int, int]
@@ -19,6 +18,7 @@ Point = tuple[int, int]
 MAP_WIDTH = 400
 MAP_HEIGHT = 600
 SCROLL_SPEED = 2
+MARGIN = 20
 
 COLOR_MAP = (200, 200, 150)
 
@@ -101,9 +101,19 @@ class MapView(Surface): # TODO: implicações de herdar Surface
         self.scrolling = False
         self.scroll_initial_y = 0
 
+        self.scroll_interval = (target.get_height() - MAP_HEIGHT - MARGIN, MARGIN)
+        self.focus_on(root)
+
     def mouse_motion(self, mouse_pos: Point):
         if self.scrolling:
-            self.pos = (self.pos[0], mouse_pos[1] - self.scroll_initial_y)
+            self.pos = (
+                self.pos[0],
+                math.clamp(
+                    mouse_pos[1] - self.scroll_initial_y,
+                    self.scroll_interval[0],
+                    self.scroll_interval[1],
+                )
+            )
 
         for node in self.nodes:
             diff = (node.pos[0] - mouse_pos[0] + self.pos[0]) ** 2 + \
@@ -149,6 +159,16 @@ class MapView(Surface): # TODO: implicações de herdar Surface
 
         self.target.blit(self, (self.pos[0], self.pos[1]))
 
+    def focus_on(self, node: MapNode):
+        self.pos = (
+            self.pos[0],
+            math.clamp(
+                (self.target.get_height() * 3/4) - node.pos[1],
+                self.scroll_interval[0],
+                self.scroll_interval[1],
+            )
+        )
+
     def _add_children(self, node: MapNode):
         self.nodes.update(node.children)
         for child in node.children:
@@ -180,8 +200,8 @@ odyssey_map = MapNode((200, 540), MapNodeType.BATTLE, initial_dialogue).to(
     MapNode((170, 460), MapNodeType.STORY, nf).to(
         MapNode((150, 360), MapNodeType.BATTLE, nf),
         node.to(
-            MapNode((180, 260), MapNodeType.BATTLE, nf).to(
-                MapNode((200, 140), MapNodeType.BOSS, boss)
+            MapNode((180, 290), MapNodeType.BATTLE, nf).to(
+                MapNode((220, 170), MapNodeType.BOSS, boss)
             )
         )
     ),
