@@ -14,7 +14,7 @@ running = True
 
 ulisses = entities.Ulisses()
 
-cl = CombatLevel(screen=screen,background_name='test_bg',stages=(['Fairy'],['Fairy','Fairy']))
+cl = CombatLevel(screen=screen,background_name='test_bg',stages=(['Fairy'],['King']))
 
 index = True
 while running:
@@ -26,6 +26,7 @@ while running:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             index = not(index)
+            cl.next_game_state()
             
 
     # fill the screen with a color to wipe away anything from last frame

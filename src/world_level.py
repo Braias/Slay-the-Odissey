@@ -7,6 +7,7 @@ class CombatLevel:
             self.background_img = pygame.image.load(f'./assests/{background_name}.png')
             self.game_state = 0
             self.screen = screen
+            self.stages = stages
             self.staged_enemies = stages[self.game_state]
             self.instantiated_enemies = []
         except FileNotFoundError as error:
@@ -20,4 +21,11 @@ class CombatLevel:
             self.instantiated_enemies.append(Enemy(name=staged_enemy))
         for instantiated_enemy in self.instantiated_enemies:
             instantiated_enemy.draw_entity(screen=self.screen)
-            
+    def next_game_state(self):
+        try:
+            self.game_state += 1
+            self.staged_enemies = self.stages[self.game_state]
+            self.instantiated_enemies = []
+        except IndexError as error:
+            print(f'{error}: attempted to pass to next stage when no following stage existed')
+                

@@ -39,7 +39,7 @@ class Entity:
             self.name = name
 
             img = pygame.image.load(f'./assests/{self.name}.png')
-            self.sprite = pygame.transform.scale(img,(img.get_width()*2,img.get_height()*2))
+            self.sprite = pygame.transform.scale(img,(150,150))
 
             self.energy = energy
             self.x_pos = x_pos
