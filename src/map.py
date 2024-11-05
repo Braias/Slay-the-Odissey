@@ -3,7 +3,7 @@
 
 from abc import ABC, abstractmethod
 from pygame import Surface, draw, display, math
-from typing import Self, Callable
+from typing import Self
 from enum import Enum
 
 
@@ -30,11 +30,11 @@ class MapNodeType(Enum):
 
 
 class MapNode(ABC):
-    def __init__(self, pos: Point, type: MapNodeType, perform: Callable):
+    def __init__(self, pos: Point, type: MapNodeType, data):
         self.pos = pos
         self.children = []
         self.type = type
-        self.perform = perform
+        self.data = data
         self.reset_flags()
 
     def reset_flags(self):
@@ -75,8 +75,6 @@ class MapNode(ABC):
 
         for child in self.children:
             child.is_available = True
-
-        self.perform()
 
 
 class MapView(Surface): # TODO: implicações de herdar Surface
@@ -141,9 +139,13 @@ class MapView(Surface): # TODO: implicações de herdar Surface
 
             self.hovered_node.visit()
             self.current_node = self.hovered_node
+
+            return self.current_node.data
         else:
             self.scrolling = True
             self.scroll_initial_y = mouse_pos[1] - self.pos[1]
+
+        return None
 
     def mouse_up(self, mouse_pos: Point):
         self.scrolling = False
