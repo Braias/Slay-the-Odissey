@@ -1,54 +1,35 @@
 from abc import ABC, abstractmethod
-import entities
+from entities import Entity, Enemy
+import Deck
 
 class Card(ABC):
     """
-    Classe para todas as cartas a serem utilizadas nas batalhas do jogo.
+    Classe para todas as cartas a serem utilizadas nas batalhas do jogo
 
-    Parâmetros
+    Atributos
     ----------
-    ABC :
-        Classe Mãe de Card. Define a existência de classes abstratas na Mãe, permitindo a criação de conteúdo específico para classe Filho.
+    name : str
+        Título específico da carta.
+    description : str
+        Descrição da carta, seus efeitos e funcionalidades.
+    cost : int
+        Custo energético da carta perante ao seu uso.
+    card_user: Entity
+        Entidade que usa a carta
+    type : str
+        Tipo da Carta dentre os definidos: "Attack", "Defense", etc.
+    effect : str, optional
+        Consequência secundária do uso da carta, default None.
     """
-    def __init__(self, 
-                 name: str, # Título da Carta
-                 description: str, # Descrição de funcionaliades e efeitos
-                 cost: int, # Custo energético da carta
-                 type: str, # Tipo de carta de acordo com sua funcionalidade principal
-                 card_user: entities.Entity, # Usuário da Carta
-                 target: entities.Entity, # Alvo da carta
-                 effect = None, # Efeito secundário da carta, opcional
-                 ):
-        """
-        Inicializa a classe Card.
-
-        Parâmetros
-        ----------
-        name : str
-            Título específico da carta.
-        description : str
-            Descrição da carta, seus efeitos e funcionalidades.
-        cost : int
-            Custo energético da carta perante ao seu uso.
-        type : str
-            Tipo da Carta dentre os definidos: "Attack", "Defense", etc.
-        card_user : entities.Entity
-            Usuário da Carta em questão.
-        target : entities.Entity
-            Entidade nas quais serão aplicadas os efeitos e funcionalidades da carta.
-        effect : str, optional
-            Consequência secundária do uso da carta, default None.
-        """
-        # Estabelece as variáveis recebidas
+    
+    def __init__(self, name: str, description: str, cost: int, type: str, effect = None):
         self._name = name
         self._description = description 
         self._cost = cost 
         self._type = type 
         self._effect = effect
-        self._card_user = card_user
-        self._target = target
     
-    def check_energy(self):
+    def check_energy(self, owner: Entity):
         """
         Checagem da possibilidade do uso da carta, baseado na disponibilidade de energia no usuário da carta e no custo energético desta.  
 
@@ -58,10 +39,10 @@ class Card(ABC):
             Se o custo é maior que a energia disponível pelo usuário, impede o uso da carta.
         """
         try:
-            if self._card_user.energy < self._cost:
+            if owner.energy < self._cost:
                 raise ValueError
         except:
-            if self._card_user.__class__ == entities.Enemy:
+            if owner.__class__ == Enemy:
                 # lógica para a ação de jogar dos inimigos (passar pra próxima carta caso não tenha energia)
                 pass
             else:
@@ -70,14 +51,14 @@ class Card(ABC):
 
     @property
     @abstractmethod
-    def check_target(): ...
+    def check_target(owner: Entity, target: Entity): ...
 
     @abstractmethod
-    def apply_card(self):
+    def apply_card(self, owner: Entity, target: Entity):
         """
         Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta.
         """ 
-        self._card_user.energy -= self._cost
+        owner.energy -= self._cost
 
 
 class AttackCard(Card):
@@ -92,10 +73,8 @@ class AttackCard(Card):
         Descrição da carta, seus efeitos e funcionalidades.
     cost : int
         Custo energético da carta perante ao seu uso.
-    card_user : entities.Entity
-        Usuário da Carta em questão.
-    target : entities.Entity
-        Entidade nas quais serão aplicadas os efeitos e funcionalidades da carta.
+    card_user: Entity
+        Entidade que usa a carta
     effect : str, optional
         Consequência secundária do uso da carta, default None.
     damage : int
@@ -103,12 +82,12 @@ class AttackCard(Card):
     type : str, optional
         Tipo da Carta dentre os definidos: "Attack", "Defense", etc, por default "attack"
     """
-    def __init__(self, name, description, cost, target, card_user, effect, damage: int, type="attack"):
-        super().__init__(name, description, cost, target, card_user, type, effect)
+    def __init__(self, name, description, cost, effect, damage: int, type="attack"):
+        super().__init__(name, description, cost, type, effect)
         self._damage = damage
 
     @property        
-    def check_target(self):
+    def check_target(target, owner):
         """
         Checa a aplicabilidade da carta no alvo escolhido.
 
@@ -118,32 +97,32 @@ class AttackCard(Card):
             Na Carta Ataque, impede o usuário de utilizar um ataque em si mesmo.
         """
         try:
-            if self._target == self._card_user:
+            if target == owner:
                 raise KeyError  # esse card não pode ser aplicado em si mesmo
             #TODO criar classe de erros específicos de aplicação de cartas
         except:
             pass
 
-    def apply_card(self):
+    def apply_card(self, target: Entity):
         """
         Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta. Aqui, diminui o HP do alvo escolhido. 
         """
-        if self._target.defense - self._damage < 0:
-            self._target.defense = 0
+        if target.defense - self._damage < 0:
+            target.defense = 0
             # Subtrai a diferença entre o dano e a defesa da vida atual do alvo
-            self._target.current_life -= (self._damage - self._target.defense)
+            target.current_life -= (self._damage - target.defense)
         else:
-            self._target.defense -= self._damage
+           target.defense -= self._damage
         super().apply_card()
     
 
 class DefenseCard(Card):
-    def __init__(self, name, description, cost, target, card_user, defense: int, type="defense", effect=None):
-        super().__init__(name, description, cost, target, card_user, type, effect)
+    def __init__(self, name, description, cost, defense: int, type="defense", effect=None):
+        super().__init__(name, description, cost, type, effect)
         self._defense = defense
      
     @property      
-    def check_target(self):
+    def check_target(target, owner):
         """
         Checa a aplicabilidade da carta no alvo escolhido.
 
@@ -153,15 +132,15 @@ class DefenseCard(Card):
             Na Carta Defesa, impede o usuário de utilizar defesa em um inimigo.
         """
         try:
-            if self._target != self._card_user:
+            if target != owner:
                 raise KeyError  # esse card só pode ser aplicado em si mesmo
             #TODO criar classe de erros específicos de aplicação de cartas
         except:
             pass
 
-    def apply_card(self):
+    def apply_card(self, target: Entity):
         """
         Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta. Aqui, aumenta a defesa do usuário. 
         """
-        self._target.defense += self._defense
+        target.defense += self._defense
         super().apply_card()
