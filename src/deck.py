@@ -1,8 +1,15 @@
 import random
+import cards
+import json
+import pygame
+
+with open(file='./assets/cards.json',mode='r') as card_config:
+    default_card_configurations = json.load(card_config)
+
 class Deck:
-    def __init__(self,draw_pile=[]):
+    def __init__(self,draw_pile_ids=[]):
         self.hand = []
-        self.draw_pile = draw_pile
+        self.draw_pile= self.build_draw_pile(draw_pile_ids)
         self.discard_pile = []
         self.exhaust_pile =[]
         self.owner = None
@@ -15,6 +22,27 @@ class Deck:
             self.draw_pile+=self.discard_pile
         random.shuffle(self.draw_pile)
         hand = self.draw_pile[:5]
-        return hand
+        for card_index,card in enumerate(hand):
+            card.x_pos = 100+150*card_index
+        self.hand = hand
+    
+    def build_draw_pile(self,draw_pile_ids:list):
+        draw_pile = []
+        for card_id in draw_pile_ids:
+            card_info = default_card_configurations['cards'][card_id]
+            card_type = card_info['type']
+            if card_type == 'attack':
+                draw_pile.append(cards.AttackCard(card_id,card_info['description'],
+                                                  card_info['cost'],card_info['damage'],
+                                                  card_type))
+            elif card_type == 'defense':
+                draw_pile.append(cards.DefenseCard(card_id,card_info['description'],
+                                                   card_info['cost'],card_info['defense'],
+                                                   card_type))
+        return draw_pile
+    def draw_hand_on_screen(self,screen:pygame.display):
+        for card in self.hand:
+            card.rect.center=(card.x_pos,card.y_pos)
+            screen.blit(card.sprite,card.rect)
     def set_owner(self,owner):
         self.owner = owner

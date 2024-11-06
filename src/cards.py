@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
-from entities import Entity, Enemy
-
+import pygame
 class Card(ABC):
     """
     Classe para todas as cartas a serem utilizadas nas batalhas do jogo
@@ -22,8 +21,15 @@ class Card(ABC):
         self._description = description 
         self._cost = cost 
         self._type = type 
+
+        img = pygame.image.load(f'./assets/{name}.png')
+        self.sprite = pygame.transform.scale(img,(150,150))
+        self.rect = self.sprite.get_rect()
+        self.x_pos = 100
+        self.y_pos = 620
+        self.rect.center = (self.x_pos,self.y_pos)
     
-    def check_energy(self, owner: Entity):
+    def check_energy(self, owner):
         """
         Checagem da possibilidade do uso da carta, baseado na disponibilidade de energia no usuário da carta e no custo energético desta.  
 
@@ -36,7 +42,7 @@ class Card(ABC):
             if owner.energy < self._cost:
                 raise ValueError
         except:
-            if owner.__class__ == Enemy:
+            if owner.__class__.__name__ == "Enemy":
                 # lógica para a ação de jogar dos inimigos (passar pra próxima carta caso não tenha energia)
                 pass
             else:
@@ -45,10 +51,10 @@ class Card(ABC):
 
     @property
     @abstractmethod
-    def check_target(owner: Entity, target: Entity): ...
+    def check_target(owner, target): ...
 
     @abstractmethod
-    def apply_card(self, owner: Entity, target: Entity):
+    def apply_card(self, owner, target):
         """
         Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta.
         """ 
@@ -93,7 +99,7 @@ class AttackCard(Card):
         except:
             pass
 
-    def apply_card(self, target: Entity):
+    def apply_card(self, target):
         """
         Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta. Aqui, diminui o HP do alvo escolhido. 
         """
@@ -128,7 +134,7 @@ class DefenseCard(Card):
         except:
             pass
 
-    def apply_card(self, target: Entity):
+    def apply_card(self, target):
         """
         Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta. Aqui, aumenta a defesa do usuário. 
         """

@@ -35,7 +35,7 @@ class Entity:
             self.is_alive = True
             self.current_life = entity_info['max_hp']
             self.max_hp = entity_info['max_hp']
-            self.deck = Deck(draw_pile=entity_info['draw_pile']) # TODO: Instanciar cartas em draw pile
+            self.deck = Deck(draw_pile_ids=entity_info['draw_pile']) 
             self.name = name
 
             img = pygame.image.load(f'./assets/{self.name}.png')

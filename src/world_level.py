@@ -46,6 +46,7 @@ class CombatLevel:
         """
         for instantiated_enemy in self.instantiated_enemies:
             instantiated_enemy.draw_entity(screen=self.screen)
+
     def instantiate_enemies(self):
         """Método responsável por instanciar todos inimigos do estágio caso não existam
         """
