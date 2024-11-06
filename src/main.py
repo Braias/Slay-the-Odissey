@@ -18,16 +18,22 @@ cl = CombatLevel(screen=screen,background_name='test_bg',stages=(['Ogre'],['King
 index = True
 while running:
     colors = ['purple','yellow']
+    test_card_button = pygame.Rect(325, 540, 150, 150)
+    entities_on_screen = [ulisses]+cl.instantiated_enemies
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            index = not(index)
-            ulisses.current_life -= 10
+            current_mouse_pos = pygame.mouse.get_pos()
+            for entity in entities_on_screen:
+                if entity.rect.collidepoint(current_mouse_pos):
+                    entity.current_life-=10
+                    break
+    
     color = colors[int(index)]
     cl.draw_level()
     ulisses.draw_entity(screen)
-    pygame.draw.rect(screen, color, pygame.Rect(440, 300, 150, 150))
+    pygame.draw.rect(screen, color, test_card_button)
 
     pygame.display.flip()
 
