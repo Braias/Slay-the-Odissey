@@ -10,13 +10,15 @@ class Card(ABC):
     ABC :
         Classe Mãe de Card. Define a existência de classes abstratas na Mãe, permitindo a criação de conteúdo específico para classe Filho.
     """
-    def __init__(self, name: str, 
-                 description: str, 
-                 cost: int,
-                 type: str,
-                 card_user: entities.Entity, 
-                 target: entities.Entity,
-                 effect = None,):
+    def __init__(self, 
+                 name: str, # Título da Carta
+                 description: str, # Descrição de funcionaliades e efeitos
+                 cost: int, # Custo energético da carta
+                 type: str, # Tipo de carta de acordo com sua funcionalidade principal
+                 card_user: entities.Entity, # Usuário da Carta
+                 target: entities.Entity, # Alvo da carta
+                 effect = None, # Efeito secundário da carta, opcional
+                 ):
         """
         Inicializa a classe Card.
 
@@ -37,10 +39,11 @@ class Card(ABC):
         effect : str, optional
             Consequência secundária do uso da carta, default None.
         """
+        # Estabelece as variáveis recebidas
         self._name = name
-        self._description = description
-        self._cost = cost
-        self._type = type
+        self._description = description 
+        self._cost = cost 
+        self._type = type 
         self._effect = effect
         self._card_user = card_user
         self._target = target
