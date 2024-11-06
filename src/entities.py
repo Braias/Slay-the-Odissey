@@ -3,7 +3,7 @@ from deck import Deck
 import json
 
 with open(file='./assets/enemies.json',mode='r') as enemy_config:
-    default_enemy_configurations = json.load(enemy_config)
+    default_entity_configurations = json.load(enemy_config)
 
 class Entity:
     """
@@ -28,29 +28,45 @@ class Entity:
         energy: int
             Quantidade energia disponivel para aplicar cartas
     """
-    def __init__(self, max_hp: int, deck: Deck, name: str,
-                  energy: int,x_pos:int,y_pos:int):
+    def __init__(self,name:str,x_pos:int,y_pos:int):
         try:
+            entity_info = default_entity_configurations['entities'][name]
             self.defense = 0
             self.is_alive = True
-            self.current_life = max_hp
-            self.max_hp = max_hp
-            self.deck = deck
+            self.current_life = entity_info['max_hp']
+            self.max_hp = entity_info['max_hp']
+            self.deck = Deck(draw_pile=entity_info['draw_pile'])
             self.name = name
 
             img = pygame.image.load(f'./assets/{self.name}.png')
-            self.sprite = pygame.transform.scale(img,(150,150))
+            self.sprite = pygame.transform.scale(img,(150,150)) # fixa as dimensões de todas as entidades em quadrados de 150x150
 
-            self.energy = energy
+            self.energy = entity_info['energy']
             self.x_pos = x_pos
             self.y_pos = y_pos
             self.rect = self.sprite.get_rect()
-
+            self.deck.set_owner(self) # definimos o dono do deck como a porpria entidade
         except FileNotFoundError as error:
             print(f"{error}: assest of name {self.name} was not found in folder 'assets'")
+
     def draw_entity(self,screen:pygame.display):
         self.rect.center = (self.x_pos,self.y_pos)
         screen.blit(self.sprite,self.rect)
+        self.draw_health_bar(screen)
+
+    def draw_health_bar(self,screen:pygame.display):
+        entity_left_corner_x_pos = self.x_pos-75
+        entity_left_corner_y_pos = self.y_pos-75
+
+
+        health_bar_size = 100 * (self.current_life/self.max_hp)
+
+        # deslocamento nas posições x e y para dar margem ao sprite
+        health_bar_bg_rect = pygame.Rect(entity_left_corner_x_pos+25,entity_left_corner_y_pos-15,100,20)
+        health_bar_rect = pygame.Rect(entity_left_corner_x_pos+25,entity_left_corner_y_pos-15,health_bar_size,20)
+
+        pygame.draw.rect(screen,'grey',health_bar_bg_rect)
+        pygame.draw.rect(screen,'red',health_bar_rect)
 
 
 class Enemy(Entity):
@@ -61,14 +77,11 @@ class Enemy(Entity):
         drop_xp (int): Quantidade de experiência que o inimigo dropa na morte
     """
     def __init__(self, name:str):
-        enemy_info = default_enemy_configurations['enemies'][name]
-        super().__init__(max_hp=enemy_info['max_hp'],
-                         name=name,
-                         energy=enemy_info['energy'],
-                         deck=Deck(),
+        entity_info = default_entity_configurations['entities'][name]
+        super().__init__(name=name,
                          x_pos=700,
                          y_pos=375)
-        self.drop_xp = enemy_info['drop_xp']
+        self.drop_xp = entity_info['drop_xp']
 
 
 class Ulisses(Entity):
@@ -81,7 +94,7 @@ class Ulisses(Entity):
         coins (int): Quantidade de moedas que o personagem possui
     """
     def __init__(self):
-        super().__init__(max_hp=80,deck=Deck(),name="Ulisses",energy=3,x_pos = 80,y_pos = 375)
+        super().__init__(name="Ulisses",x_pos = 80,y_pos = 375)
         self.level = 0
         self.xp = 0
         self.coins = 0

@@ -1,11 +1,11 @@
 import random
-
 class Deck:
     def __init__(self,draw_pile=[]):
         self.hand = []
         self.draw_pile = draw_pile
         self.discard_pile = []
         self.exhaust_pile =[]
+        self.owner = None
 
     def shuffle_and_allocate(self):     
         # Checamos quantas caratas estão disponíveis
@@ -16,3 +16,5 @@ class Deck:
         random.shuffle(self.draw_pile)
         hand = self.draw_pile[:5]
         return hand
+    def set_owner(self,owner):
+        self.owner = owner

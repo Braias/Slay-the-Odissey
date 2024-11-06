@@ -13,7 +13,7 @@ running = True
 
 ulisses = entities.Ulisses()
 
-cl = CombatLevel(screen=screen,background_name='test_bg',stages=(['Fairy'],['King']))
+cl = CombatLevel(screen=screen,background_name='test_bg',stages=(['Ogre'],['King']))
 
 index = True
 while running:
@@ -23,6 +23,7 @@ while running:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             index = not(index)
+            ulisses.current_life -= 10
     color = colors[int(index)]
     cl.draw_level()
     ulisses.draw_entity(screen)
