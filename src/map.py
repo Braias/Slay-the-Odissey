@@ -8,27 +8,16 @@ from map_node import MapNode, MapNodeType, Point
 SCROLL_SPEED = 7
 MARGIN = 20
 
-COLOR_MAP = (255, 194, 161)
 
-
-def _get_sprite(rect, spritesheet: pygame.Surface):
-    rect = pygame.Rect(rect)
-    sprite = pygame.Surface(rect.size)
-    sprite.blit(spritesheet, (0, 0), rect)
-    sprite.set_colorkey((0, 0, 0), pygame.RLEACCEL)
-    return sprite
-    
-
-class MapScreen(pygame.Surface): # TODO: implicações de herdar Surface
+class MapScreen(pygame.Surface):
     def __init__(self, target: pygame.Surface, root: MapNode):
         self._load_sprites()
-        self.size = self.map_sprite.get_size()
+        pygame.Surface.__init__(self, self.map_sprite.get_size(), pygame.SRCALPHA)
         self.pos = (
-            (target.get_width() - self.size[0]) >> 1,
-            (target.get_height() - self.size[1]) >> 1
+            (target.get_width() - self.get_width()) >> 1,
+            (target.get_height() - self.get_height()) >> 1
         )
 
-        pygame.Surface.__init__(self, (self.size[0], self.size[1]))
         self.target = target
         
         self.root = root
@@ -43,7 +32,7 @@ class MapScreen(pygame.Surface): # TODO: implicações de herdar Surface
         self.scrolling = False
         self.scroll_initial_y = 0
 
-        self.scroll_interval = (target.get_height() - self.size[1] - MARGIN, MARGIN)
+        self.scroll_interval = (target.get_height() - self.get_height() - MARGIN, MARGIN)
         self._scroll_to(root)
 
     def handle_event(self, ev: pygame.event.Event):
@@ -137,25 +126,22 @@ class MapScreen(pygame.Surface): # TODO: implicações de herdar Surface
             self.scrolling = False
 
     def _load_sprites(self):
-        self.map_sprite = pygame.image.load("assests/map_bg.png").convert()
+        self.map_sprite = pygame.image.load("assests/map_bg.png").convert_alpha()
 
-        # só pra deixar mais claras as coordenadas abaixo
-        f = lambda x, y: (x * 48, y * 48, 48, 48)
-
-        ss = pygame.image.load("assests/map_icons.png").convert()
+        ss = pygame.image.load("assests/map_icons.png").convert_alpha()
         self.node_sprites = [
-            _get_sprite(f(3,0), ss), # nó de batalha inacessível
-            _get_sprite(f(3,1), ss), # nó de história inacessível
-            _get_sprite((128, 96, 64, 64), ss), # nó de boss inacessível
-            _get_sprite(f(2,0), ss), # nó ... já visitado
-            _get_sprite(f(2,1), ss),
-            _get_sprite((0,96,64,64), ss),
-            _get_sprite(f(0,0), ss), # nó ... acessível
-            _get_sprite(f(0,1), ss),
-            _get_sprite((0,96,64,64), ss),
-            _get_sprite(f(1,0), ss), # nó ... sendo selecionado pelo mouse
-            _get_sprite(f(1,1), ss),
-            _get_sprite((64,96,64,64), ss),
+            ss.subsurface((142, 0,  48, 48)), # nó de batalha inacessível
+            ss.subsurface((142, 48, 48, 48)), # nó de história inacessível
+            ss.subsurface((128, 96, 64, 64)), # nó de boss inacessível
+            ss.subsurface((96,  0,  48, 48)), # nó ... já visitado
+            ss.subsurface((96,  48, 48, 48)),
+            ss.subsurface((0,   96, 64, 64)),
+            ss.subsurface((0,   0,  48, 48)), # nó ... acessível
+            ss.subsurface((0,   48, 48, 48)),
+            ss.subsurface((0,   96, 64, 64)),
+            ss.subsurface((48,  0,  48, 48)), # nó ... sendo selecionado
+            ss.subsurface((48,  48, 48, 48)),
+            ss.subsurface((64,  96, 64, 64)),
         ]
 
     def _add_children(self, node: MapNode):
@@ -173,12 +159,11 @@ class MapScreen(pygame.Surface): # TODO: implicações de herdar Surface
             self._render_edges(child)
 
     def _render_node(self, node: MapNode):
-        sprite_id = 0
+        sprite_id = node.was_visited + \
+                    (node.is_navigable << 1) + \
+                    (node == self.hovered_node)
 
-        sprite_id += node.type.value
-        sprite_id += 3 * node.was_visited
-        sprite_id += (6 * node.is_navigable)
-        sprite_id += 3 * (node.is_navigable and node == self.hovered_node)
+        sprite_id = len(MapNodeType) * sprite_id + node.type.value
 
         sprite = self.node_sprites[sprite_id]
         w, h = sprite.get_size()
@@ -193,7 +178,7 @@ class MapScreen(pygame.Surface): # TODO: implicações de herdar Surface
 
 node = MapNode((230, 300), MapNodeType.STORY, 1)
 
-odyssey_map = MapNode((100, 450), MapNodeType.BATTLE, 2).to(
+odyssey_map = MapNode((100, 450), MapNodeType.STORY, 2).to(
     MapNode((170, 360), MapNodeType.STORY, 3).to(
         MapNode((150, 260), MapNodeType.BATTLE, 4),
         node.to(
