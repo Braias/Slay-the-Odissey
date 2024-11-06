@@ -35,7 +35,7 @@ class Entity:
             self.is_alive = True
             self.current_life = entity_info['max_hp']
             self.max_hp = entity_info['max_hp']
-            self.deck = Deck(draw_pile=entity_info['draw_pile'])
+            self.deck = Deck(draw_pile=entity_info['draw_pile']) # TODO: Instanciar cartas em draw pile
             self.name = name
 
             img = pygame.image.load(f'./assets/{self.name}.png')
@@ -50,14 +50,14 @@ class Entity:
             print(f"{error}: assest of name {self.name} was not found in folder 'assets'")
 
     def draw_entity(self,screen:pygame.display):
-    """
-       Função que desenha uma entidade qualquer do jogo, por meio do método screen.blit.
+        """
+        Função que desenha uma entidade qualquer do jogo, por meio do método screen.blit.
 
         Parâmetros 
         ----------
         screen : pygame.display
             Display do jogo
-    """
+        """
         self.rect.center = (self.x_pos,self.y_pos)
         screen.blit(self.sprite,self.rect)
         self.draw_health_bar(screen)
