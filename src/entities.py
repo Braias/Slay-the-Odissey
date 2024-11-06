@@ -51,7 +51,7 @@ class Entity:
 
     def draw_entity(self,screen:pygame.display):
         """
-        Função que desenha uma entidade qualquer do jogo, por meio do método screen.blit.
+       Função que desenha uma entidade qualquer do jogo, por meio do método screen.blit.
 
         Parâmetros 
         ----------

@@ -8,7 +8,7 @@ class Deck:
         self.owner = None
 
     def shuffle_and_allocate(self):     
-        # Checamos quantas caratas estão disponíveis
+        # Checamos quantas cartas estão disponíveis
         cards_to_draw = len(self.draw_pile) 
         # Caso não temos cartas suficentes para formar uma mão adcionamos do deck de descarte
         if cards_to_draw < 5: 
