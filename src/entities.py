@@ -9,23 +9,23 @@ class Entity:
     """
     Classe que representa uma entidade qualquer no jogo, dentre as possibilidades estabelecidas.
 
-    Atributos:
+    Atributos
     ----------
         defense: int
             Valor da defesa da entidade, que reduz o dano recebido.
-        is_alive: bool
+        is_alive : bool
             Indica se a entidade está viva.
-        current_life: int
+        current_life : int
             Quantidade de pontos de vida atuais da entidade
-        max_hp: int
+        max_hp : int
             Quantidade máxima de pontos de vida da entidade
-        deck: Deck
+        deck : Deck
             Conjunto de cartas associado à entidade
-        sprite: pygame.image
+        sprite : pygame.image
             Sprite reprsentativo da entidade
-        name: str
+        name : str
             Nome da entidade
-        energy: int
+        energy : int
             Quantidade energia disponivel para aplicar cartas
     """
     def __init__(self,name:str,x_pos:int,y_pos:int):
@@ -50,6 +50,14 @@ class Entity:
             print(f"{error}: assest of name {self.name} was not found in folder 'assets'")
 
     def draw_entity(self,screen:pygame.display):
+    """
+       Função que desenha uma entidade qualquer do jogo, por meio do método screen.blit.
+
+        Parâmetros 
+        ----------
+        screen : pygame.display
+            Display do jogo
+    """
         self.rect.center = (self.x_pos,self.y_pos)
         screen.blit(self.sprite,self.rect)
         self.draw_health_bar(screen)
@@ -73,8 +81,10 @@ class Enemy(Entity):
     """
     Classe que representa um inimigo no jogo - herda classe 'Entity'
 
-    Atributos:
-        drop_xp (int): Quantidade de experiência que o inimigo dropa na morte
+    Atributos
+    ---------
+        drop_xp : int
+            Quantidade de experiência que o inimigo dropa na morte
     """
     def __init__(self, name:str):
         entity_info = default_entity_configurations['entities'][name]
@@ -88,10 +98,14 @@ class Ulisses(Entity):
     """
     Classe que representa o personagem principal - herdando da classe 'Entity'.
 
-    Atributos:
-        level (int): Nível atual do personagem
-        xp (int): Experiência acumulada do personagem
-        coins (int): Quantidade de moedas que o personagem possui
+    Atributos
+    ---------
+        level : int
+            Nível atual do personagem
+        xp : int
+            Experiência acumulada do personagem
+        coins : int
+            Quantidade de moedas que o personagem possui
     """
     def __init__(self):
         super().__init__(name="Ulisses",x_pos = 80,y_pos = 375)
