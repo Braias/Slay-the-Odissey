@@ -33,32 +33,31 @@ class MapScreen(pygame.Surface): # TODO: implicações de herdar Surface
         
         self.root = root
         self.nodes = set([root])
-        self.hovered_node = None
         self._add_children(root)
 
+        self.hovered_node = None
         self.current_node = root
+        self.choosen_node = None
         root.begin()
 
         self.scrolling = False
         self.scroll_initial_y = 0
 
         self.scroll_interval = (target.get_height() - self.size[1] - MARGIN, MARGIN)
-        self.scroll_to(root)
+        self._scroll_to(root)
 
     def handle_event(self, ev: pygame.event.Event):
         if ev.type == pygame.MOUSEMOTION:
-            pos = ev.dict["pos"]
-            self._mouse_motion(pos)
+            self._mouse_motion(ev.dict["pos"])
 
         elif ev.type == pygame.MOUSEBUTTONDOWN:
-            pos = ev.dict["pos"]
-            self._mouse_down(pos)
+            self._mouse_down(ev.dict["pos"], ev.dict["button"])
 
         elif ev.type == pygame.MOUSEBUTTONUP:
-            pos = ev.dict["pos"]
-            self._mouse_up(pos)
+            self._mouse_up(ev.dict["pos"], ev.dict["button"])
 
         elif ev.type == pygame.MOUSEWHEEL:
+            self.hovered_node = None
             self.pos = (
                 self.pos[0],
                 pygame.math.clamp(
@@ -67,6 +66,13 @@ class MapScreen(pygame.Surface): # TODO: implicações de herdar Surface
                     self.scroll_interval[1],
                 )
             )
+
+    def get(self):
+        node = self.choosen_node
+        self.choosen_node = None
+        if node != None:
+            self._scroll_to(node)
+            return node.data
 
     def render(self):
         self.blit(self.map_sprite, (0,0))
@@ -77,7 +83,7 @@ class MapScreen(pygame.Surface): # TODO: implicações de herdar Surface
 
         self.target.blit(self, (self.pos[0], self.pos[1]))
 
-    def scroll_to(self, node: MapNode):
+    def _scroll_to(self, node: MapNode):
         self.pos = (
             self.pos[0],
             pygame.math.clamp(
@@ -110,10 +116,13 @@ class MapScreen(pygame.Surface): # TODO: implicações de herdar Surface
 
         self.hovered_node = None
 
-    def _mouse_down(self, mouse_pos: Point):
+    def _mouse_down(self, mouse_pos: Point, button: int):
+        if button != 1: return
+        
         if self.hovered_node != None:
             self.current_node.navigate_to(self.hovered_node)
             self.current_node = self.hovered_node
+            self.choosen_node = self.hovered_node
             self.hovered_node = None
 
             return self.current_node.data
@@ -123,8 +132,9 @@ class MapScreen(pygame.Surface): # TODO: implicações de herdar Surface
 
         return None
 
-    def _mouse_up(self, mouse_pos: Point):
-        self.scrolling = False
+    def _mouse_up(self, mouse_pos: Point, button: int):
+        if button == 1:
+            self.scrolling = False
 
     def _load_sprites(self):
         self.map_sprite = pygame.image.load("assests/map_bg.png").convert()
@@ -183,7 +193,7 @@ class MapScreen(pygame.Surface): # TODO: implicações de herdar Surface
 
 node = MapNode((230, 300), MapNodeType.STORY, 1)
 
-odyssey_map = MapNode((200, 440), MapNodeType.BATTLE, 2).to(
+odyssey_map = MapNode((100, 450), MapNodeType.BATTLE, 2).to(
     MapNode((170, 360), MapNodeType.STORY, 3).to(
         MapNode((150, 260), MapNodeType.BATTLE, 4),
         node.to(
