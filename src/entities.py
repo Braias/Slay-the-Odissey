@@ -9,7 +9,7 @@ class Entity:
     """
     Classe que representa uma entidade qualquer no jogo, dentre as possibilidades estabelecidas.
 
-    Atributos:
+    Atributos
     ----------
         defense: int
             Valor da defesa da entidade, que reduz o dano recebido.
@@ -57,8 +57,10 @@ class Enemy(Entity):
     """
     Classe que representa um inimigo no jogo - herda classe 'Entity'
 
-    Atributos:
-        drop_xp (int): Quantidade de experiência que o inimigo dropa na morte
+    Atributos
+    ---------
+        drop_xp: int
+            Quantidade de experiência que o inimigo dropa na morte
     """
     def __init__(self, name:str):
         enemy_info = default_enemy_configurations['enemies'][name]
@@ -75,10 +77,14 @@ class Ulisses(Entity):
     """
     Classe que representa o personagem principal - herdando da classe 'Entity'.
 
-    Atributos:
-        level (int): Nível atual do personagem
-        xp (int): Experiência acumulada do personagem
-        coins (int): Quantidade de moedas que o personagem possui
+    Atributos
+    ---------
+        level: int
+            Nível atual do personagem
+        xp: int
+            Experiência acumulada do personagem
+        coins: int
+            Quantidade de moedas que o personagem possui
     """
     def __init__(self):
         super().__init__(max_hp=80,deck=Deck(),name="Ulisses",energy=3,x_pos = 80,y_pos = 375)
