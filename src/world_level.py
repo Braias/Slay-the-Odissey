@@ -38,11 +38,16 @@ class CombatLevel:
         """
         self.screen.blit(self.background_img,(0,0))
         pygame.draw.rect(self.screen,color='brown',rect=pygame.Rect(0, 540,800,160))
+        self.instantiate_enemies()
         self.draw_enemies()
 
     def draw_enemies(self):
-        """Método responsável por instanciar inimigos caso nao estejam instanciados e desenhá-los
-        na tela do jogador
+        """Método responsável por desenhar inimigos na tela do jogador 
+        """
+        for instantiated_enemy in self.instantiated_enemies:
+            instantiated_enemy.draw_entity(screen=self.screen)
+    def instantiate_enemies(self):
+        """Método responsável por instanciar todos inimigos do estágio caso não existam
         """
         num_staged_enemies = len(self.staged_enemies)
         num_instantiated_enemies = len(self.instantiated_enemies)
@@ -50,9 +55,6 @@ class CombatLevel:
             for enemy_index,staged_enemy in enumerate(self.staged_enemies):
                 self.instantiated_enemies.append(Enemy(name=staged_enemy))
                 self.instantiated_enemies[enemy_index].x_pos -= 150*enemy_index
-        for instantiated_enemy in self.instantiated_enemies:
-            instantiated_enemy.draw_entity(screen=self.screen)
-
     def next_game_state(self):
         """Método responsável por limpar inimigos instanciados e prepar novos inimgos 
         caso exista outro estágio
