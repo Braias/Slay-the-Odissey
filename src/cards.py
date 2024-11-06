@@ -81,42 +81,26 @@ class AttackCard(Card):
     """
     Classe Filha de Card, referente às cartas de Ataque, que diminuem HP do alvo.
 
-    Parâmetros
+    Atributos
     ----------
-    Card
-        Classe Mãe de AttackCard.
+    name : str
+        Título específico da carta.
+    description : str
+        Descrição da carta, seus efeitos e funcionalidades.
+    cost : int
+        Custo energético da carta perante ao seu uso.
+    card_user : entities.Entity
+        Usuário da Carta em questão.
+    target : entities.Entity
+        Entidade nas quais serão aplicadas os efeitos e funcionalidades da carta.
+    effect : str, optional
+        Consequência secundária do uso da carta, default None.
+    damage : int
+        Valor de dimuição do HP do alvo.
+    type : str, optional
+        Tipo da Carta dentre os definidos: "Attack", "Defense", etc, por default "attack"
     """
-    def __init__(self, 
-                 name, 
-                 description, 
-                 cost, 
-                 target, 
-                 card_user, 
-                 effect, 
-                 damage: int, 
-                 type="attack"):
-        """
-        Inicia a classe AttackCard.
-
-        Parâmetros
-        ----------
-        name : str
-            Título específico da carta.
-        description : str
-            Descrição da carta, seus efeitos e funcionalidades.
-        cost : int
-            Custo energético da carta perante ao seu uso.
-        card_user : entities.Entity
-            Usuário da Carta em questão.
-        target : entities.Entity
-            Entidade nas quais serão aplicadas os efeitos e funcionalidades da carta.
-        effect : str, optional
-            Consequência secundária do uso da carta, default None.
-        damage : int
-            Valor de dimuição do HP do alvo.
-        type : str, optional
-            Tipo da Carta dentre os definidos: "Attack", "Defense", etc, por default "attack"
-        """
+    def __init__(self, name, description, cost, target, card_user, effect, damage: int, type="attack"):
         super().__init__(name, description, cost, target, card_user, type, effect)
         self._damage = damage
 
