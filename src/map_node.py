@@ -1,5 +1,4 @@
-from pygame import Surface, draw
-from abc import ABC, abstractmethod
+from pygame import Surface, draw, math
 from enum import Enum
 from typing import Self
 
@@ -13,9 +12,9 @@ class MapNodeType(Enum):
     BOSS = 2
 
 
-class MapNode(ABC):
+class MapNode:
     def __init__(self, pos: Point, type: MapNodeType, data):
-        self.pos = pos
+        self.pos = math.Vector2(pos)
         self.children = []
         self.type = type
         self.data = data
@@ -31,18 +30,13 @@ class MapNode(ABC):
         if child not in self.children:
             raise ValueError("Nó sendo visitado não é filho do anterior")
 
+        child.activate()
+
         self.is_active = False
         for c in self.children:
             c.is_navigable = False
 
-        child.was_visited = True
-        child.is_active = True
-        child.is_navigable = False
-
-        for c in child.children:
-            c.is_navigable = True
-
-    def begin(self):
+    def activate(self):
         self.was_visited = True
         self.is_active = True
         for c in self.children:
