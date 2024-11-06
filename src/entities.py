@@ -65,7 +65,8 @@ class Entity:
     def draw_health_bar(self,screen:pygame.display):
         entity_left_corner_x_pos = self.x_pos-75
         entity_left_corner_y_pos = self.y_pos-75
-
+        text_font = pygame.font.SysFont('Arial',18)
+        text_img = text_font.render(f'{self.current_life}/{self.max_hp}',True,'white')
 
         health_bar_size = 100 * (self.current_life/self.max_hp)
 
@@ -73,8 +74,10 @@ class Entity:
         health_bar_bg_rect = pygame.Rect(entity_left_corner_x_pos+25,entity_left_corner_y_pos-15,100,20)
         health_bar_rect = pygame.Rect(entity_left_corner_x_pos+25,entity_left_corner_y_pos-15,health_bar_size,20)
 
+
         pygame.draw.rect(screen,'grey',health_bar_bg_rect)
         pygame.draw.rect(screen,'red',health_bar_rect)
+        screen.blit(text_img,(entity_left_corner_x_pos+25,entity_left_corner_y_pos-15))
 
 
 class Enemy(Entity):
