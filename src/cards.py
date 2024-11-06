@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from entities import Entity, Enemy
-import Deck
 
 class Card(ABC):
     """
