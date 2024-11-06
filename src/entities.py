@@ -13,19 +13,19 @@ class Entity:
     ----------
         defense: int
             Valor da defesa da entidade, que reduz o dano recebido.
-        is_alive: bool
+        is_alive : bool
             Indica se a entidade está viva.
-        current_life: int
+        current_life : int
             Quantidade de pontos de vida atuais da entidade
-        max_hp: int
+        max_hp : int
             Quantidade máxima de pontos de vida da entidade
-        deck: Deck
+        deck : Deck
             Conjunto de cartas associado à entidade
-        sprite: pygame.image
+        sprite : pygame.image
             Sprite reprsentativo da entidade
-        name: str
+        name : str
             Nome da entidade
-        energy: int
+        energy : int
             Quantidade energia disponivel para aplicar cartas
     """
     def __init__(self, max_hp: int, deck: Deck, name: str,
@@ -48,7 +48,16 @@ class Entity:
 
         except FileNotFoundError as error:
             print(f"{error}: assest of name {self.name} was not found in folder 'assets'")
+
     def draw_entity(self,screen:pygame.display):
+    """
+       Função que desenha uma entidade qualquer do jogo, por meio do método screen.blit.
+
+        Parâmetros 
+        ----------
+        screen : pygame.display
+            Display do jogo
+    """
         self.rect.center = (self.x_pos,self.y_pos)
         screen.blit(self.sprite,self.rect)
 
@@ -59,7 +68,7 @@ class Enemy(Entity):
 
     Atributos
     ---------
-        drop_xp: int
+        drop_xp : int
             Quantidade de experiência que o inimigo dropa na morte
     """
     def __init__(self, name:str):
@@ -79,11 +88,11 @@ class Ulisses(Entity):
 
     Atributos
     ---------
-        level: int
+        level : int
             Nível atual do personagem
-        xp: int
+        xp : int
             Experiência acumulada do personagem
-        coins: int
+        coins : int
             Quantidade de moedas que o personagem possui
     """
     def __init__(self):
