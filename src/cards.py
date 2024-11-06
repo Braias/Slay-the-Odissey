@@ -13,20 +13,15 @@ class Card(ABC):
         Descrição da carta, seus efeitos e funcionalidades.
     cost : int
         Custo energético da carta perante ao seu uso.
-    card_user: Entity
-        Entidade que usa a carta
     type : str
         Tipo da Carta dentre os definidos: "Attack", "Defense", etc.
-    effect : str, optional
-        Consequência secundária do uso da carta, default None.
     """
     
-    def __init__(self, name: str, description: str, cost: int, type: str, effect = None):
+    def __init__(self, name: str, description: str, cost: int, type: str):
         self._name = name
         self._description = description 
         self._cost = cost 
         self._type = type 
-        self._effect = effect
     
     def check_energy(self, owner: Entity):
         """
@@ -72,17 +67,13 @@ class AttackCard(Card):
         Descrição da carta, seus efeitos e funcionalidades.
     cost : int
         Custo energético da carta perante ao seu uso.
-    card_user: Entity
-        Entidade que usa a carta
-    effect : str, optional
-        Consequência secundária do uso da carta, default None.
     damage : int
         Valor de dimuição do HP do alvo.
     type : str, optional
         Tipo da Carta dentre os definidos: "Attack", "Defense", etc, por default "attack"
     """
-    def __init__(self, name, description, cost, effect, damage: int, type="attack"):
-        super().__init__(name, description, cost, type, effect)
+    def __init__(self, name, description, cost, damage: int, type="attack"):
+        super().__init__(name, description, cost, type)
         self._damage = damage
 
     @property        
@@ -116,8 +107,8 @@ class AttackCard(Card):
     
 
 class DefenseCard(Card):
-    def __init__(self, name, description, cost, defense: int, type="defense", effect=None):
-        super().__init__(name, description, cost, type, effect)
+    def __init__(self, name, description, cost, defense: int, type="defense"):
+        super().__init__(name, description, cost, type)
         self._defense = defense
      
     @property      
