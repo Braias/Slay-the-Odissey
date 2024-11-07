@@ -9,10 +9,17 @@
         },
         "Tapa":{
             "name":"Tapa",
-            "description":"Estapeia o inimigo",
+            "description":"Estapeia o inimigo, ",
             "cost": 0,
             "damage": 5,
             "type":"attack"
+        },
+        "Cabecada":{
+            "name": "Cabecada",
+            "description": "Bate sua cabeça no inimigo",
+            "cost": 1,
+            "damage": 9,
+            "type": "attack"
         },
         "Escudo":{
             "name":"Escudo",
