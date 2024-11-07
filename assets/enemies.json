@@ -3,7 +3,7 @@
         "Ulisses":{
             "max_hp":80,
             "energy":3,
-            "draw_pile": ["Facada","Tapa","Escudo"]
+            "draw_pile": ["Facada","Tapa","Escudo","Facada","Escudo","Escudo"]
         },
         "Fairy": {
             "drop_xp": 50,

@@ -1,4 +1,4 @@
-# Example file showing a basic pygame "game loop"
+# Example file showing a basic pygame "game loop" 
 import pygame
 import entities
 from deck import Deck
@@ -25,6 +25,7 @@ while running:
             current_mouse_pos = pygame.mouse.get_pos()
             if ulisses.rect.collidepoint(current_mouse_pos):
                 ulisses.deck.shuffle_and_allocate()
+                print(ulisses.deck)
     cl.draw_level()
     ulisses.draw_entity(screen)
     ulisses.deck.draw_hand_on_screen(screen)
