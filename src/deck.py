@@ -14,7 +14,13 @@ class Deck:
         self.exhaust_pile =[]
         self.owner = None
     def __str__(self):
-        return f"hand:{[each_card._name for each_card in self.hand]}\ndraw pile:{[each_card._name for each_card in self.draw_pile]}"
+        hand_names = []
+        discard_pile_names = []
+        for each_card in self.hand:
+            hand_names.append(each_card._name)
+        for each_card in self.discard_pile:
+            discard_pile_names.append(each_card._name)
+        return f"hand:{hand_names}\ndraw pile:{discard_pile_names}"
     def shuffle_and_allocate(self):
         # limpar mao atual e mover para pilha de descarte
         self.discard_pile += self.hand 
