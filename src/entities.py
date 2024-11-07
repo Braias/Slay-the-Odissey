@@ -2,7 +2,7 @@ import pygame
 from deck import Deck
 import json
 
-with open(file='./assets/enemies.json',mode='r') as enemy_config:
+with open(file='./assets/entities.json',mode='r') as enemy_config:
     default_entity_configurations = json.load(enemy_config)
 
 class Entity:
@@ -25,7 +25,9 @@ class Entity:
             Sprite reprsentativo da entidade
         name : str
             Nome da entidade
-        energy : int
+        max_energy : int
+            Quantidade energia maximo para aplicar cartas
+        current_energy : int
             Quantidade energia disponivel para aplicar cartas
     """
     def __init__(self,name:str,x_pos:int,y_pos:int):
@@ -41,14 +43,16 @@ class Entity:
             img = pygame.image.load(f'./assets/{self.name}.png')
             self.sprite = pygame.transform.scale(img,(150,150)) # fixa as dimensões de todas as entidades em quadrados de 150x150
 
-            self.energy = entity_info['energy']
+            self.max_energy = entity_info['max_energy']
+            self.current_energy = entity_info['max_energy']
             self.x_pos = x_pos
             self.y_pos = y_pos
             self.rect = self.sprite.get_rect()
             self.deck.set_owner(self) # definimos o dono do deck como a porpria entidade
         except FileNotFoundError as error:
             print(f"{error}: assest of name {self.name} was not found in folder 'assets'")
-
+    def __str__(self):
+        return f"name:{self.name}\ndeck:{self.deck.__str__()}\nenergy:{self.current_energy}/{self.max_energy}"
     def draw_entity(self,screen:pygame.display):
         """
        Função que desenha uma entidade qualquer do jogo, por meio do método screen.blit.
@@ -109,10 +113,12 @@ class Ulisses(Entity):
             Experiência acumulada do personagem
         coins : int
             Quantidade de moedas que o personagem possui
+        health_regain : int
+            Quantidade de vida ganha ao terminar um combate
     """
     def __init__(self):
         super().__init__(name="Ulisses",x_pos = 80,y_pos = 375)
         self.level = 0
         self.xp = 0
         self.coins = 0
-        
+        self.health_regain = 8

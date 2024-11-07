@@ -1,5 +1,5 @@
 import pygame
-from entities import Enemy
+from entities import Enemy,Ulisses
 
 class CombatLevel:
     """
@@ -56,7 +56,7 @@ class CombatLevel:
             for enemy_index,staged_enemy in enumerate(self.staged_enemies):
                 self.instantiated_enemies.append(Enemy(name=staged_enemy))
                 self.instantiated_enemies[enemy_index].x_pos -= 150*enemy_index
-    def next_game_state(self):
+    def next_game_state(self,ulisses:Ulisses):
         """Método responsável por limpar inimigos instanciados e prepar novos inimgos 
         caso exista outro estágio
         """
@@ -64,5 +64,29 @@ class CombatLevel:
             self.game_state += 1
             self.staged_enemies = self.stages[self.game_state]
             self.instantiated_enemies = []
+            final_health = ulisses.current_life + ulisses.health_regain
+            if final_health > ulisses.max_hp:
+                ulisses.current_life = ulisses.max_hp
+            else:
+                ulisses.current_life = final_health
         except IndexError as error:
             print(f'{error}: attempted to pass to next stage when no following stage existed')
+    # TODO: Atualmente Logica de combat loop 'pula' cartas ex: mao=[A,B,C]
+    # mao jogada : A -> C
+    def execute_enemy_combat_loop(self,target:Ulisses):
+        for each_enemy in self.instantiated_enemies:
+            each_enemy.deck.shuffle_and_allocate() 
+            for each_card in each_enemy.deck.hand:
+                if each_enemy.current_energy >= each_card._cost:
+                    if each_card._type == 'attack':
+                        each_card.apply_card(each_enemy,target)
+                    elif each_card._type == 'defense':
+                        each_card.apply_card(each_enemy,each_enemy)
+                    each_enemy.deck.discard_card(each_card)
+                    print(each_enemy.deck)
+                else:
+                    break
+            each_enemy.current_energy = each_enemy.max_energy
+
+
+                    

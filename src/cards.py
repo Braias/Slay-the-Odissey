@@ -39,7 +39,7 @@ class Card(ABC):
             Se o custo é maior que a energia disponível pelo usuário, impede o uso da carta.
         """
         try:
-            if owner.energy < self._cost:
+            if owner.current_energy < self._cost:
                 raise ValueError
         except:
             if owner.__class__.__name__ == "Enemy":
@@ -58,7 +58,7 @@ class Card(ABC):
         """
         Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta.
         """ 
-        owner.energy -= self._cost
+        owner.current_energy -= self._cost
 
 
 class AttackCard(Card):
@@ -99,7 +99,7 @@ class AttackCard(Card):
         except:
             pass
 
-    def apply_card(self, target):
+    def apply_card(self,owner,target):
         """
         Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta. Aqui, diminui o HP do alvo escolhido. 
         """
@@ -109,7 +109,7 @@ class AttackCard(Card):
             target.current_life -= (self._damage - target.defense)
         else:
            target.defense -= self._damage
-        super().apply_card()
+        super().apply_card(owner,target)
     
 
 class DefenseCard(Card):
@@ -134,9 +134,9 @@ class DefenseCard(Card):
         except:
             pass
 
-    def apply_card(self, target):
+    def apply_card(self,owner,target):
         """
         Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta. Aqui, aumenta a defesa do usuário. 
         """
         target.defense += self._defense
-        super().apply_card()
+        super().apply_card(owner,target)

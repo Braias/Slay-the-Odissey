@@ -20,7 +20,7 @@ class Deck:
             hand_names.append(each_card._name)
         for each_card in self.discard_pile:
             discard_pile_names.append(each_card._name)
-        return f"hand:{hand_names}\ndraw pile:{discard_pile_names}"
+        return f"hand:{hand_names}\ndiscard pile:{discard_pile_names}"
     def shuffle_and_allocate(self):
         # limpar mao atual e mover para pilha de descarte
         self.discard_pile += self.hand 
@@ -60,3 +60,6 @@ class Deck:
             screen.blit(card.sprite,card.rect)
     def set_owner(self,owner):
         self.owner = owner
+    def discard_card(self,card:cards):
+        self.hand.remove(card)
+        self.discard_pile.append(card)

@@ -25,7 +25,9 @@ while running:
             current_mouse_pos = pygame.mouse.get_pos()
             if ulisses.rect.collidepoint(current_mouse_pos):
                 ulisses.deck.shuffle_and_allocate()
-                print(ulisses.deck)
+            for enemy in cl.instantiated_enemies:
+                if enemy.rect.collidepoint(current_mouse_pos):
+                    cl.execute_enemy_combat_loop(ulisses)
     cl.draw_level()
     ulisses.draw_entity(screen)
     ulisses.deck.draw_hand_on_screen(screen)
