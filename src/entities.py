@@ -1,8 +1,12 @@
+from pathlib import Path
 import pygame
 from deck import Deck
 import json
 
-with open(file='./assets/entities.json',mode='r') as enemy_config:
+game_dir = Path(__file__).parent.parent
+entities_json_path = game_dir / "assets" / "entities.json"
+
+with open(file=entities_json_path,mode='r') as enemy_config:
     default_entity_configurations = json.load(enemy_config)
 
 class Entity:
@@ -40,7 +44,8 @@ class Entity:
             self.deck = Deck(draw_pile_ids=entity_info['draw_pile']) 
             self.name = name
 
-            img = pygame.image.load(f'./assets/{self.name}.png')
+            img_path = game_dir / "assets" / f"{self.name}.png"
+            img = pygame.image.load(img_path)
             self.sprite = pygame.transform.scale(img,(150,150)) # fixa as dimensões de todas as entidades em quadrados de 150x150
 
             self.max_energy = entity_info['max_energy']
@@ -55,7 +60,7 @@ class Entity:
         return f"name:{self.name}\ndeck:{self.deck.__str__()}\nenergy:{self.current_energy}/{self.max_energy}"
     def draw_entity(self,screen:pygame.display):
         """
-       Função que desenha uma entidade qualquer do jogo, por meio do método screen.blit.
+        Função que desenha uma entidade qualquer do jogo, por meio do método screen.blit.
 
         Parâmetros 
         ----------

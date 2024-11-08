@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from pathlib import Path
 import pygame
 
 class InsufficientEnergyError(Exception):
@@ -31,7 +32,10 @@ class Card(ABC):
         self._cost = cost 
         self._type = type 
         
-        img = pygame.image.load(f"./assets/{name}.png")
+        game_dir = Path(__file__).parent.parent
+        img_path = game_dir / "assets" / f"{name}.png"
+        img = pygame.image.load(img_path)
+        
         self.sprite = pygame.transform.scale(img,(150,150))
         self.rect = self.sprite.get_rect()
         self.x_pos = 100

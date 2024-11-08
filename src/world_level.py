@@ -1,3 +1,4 @@
+from pathlib import Path
 import pygame
 from entities import Enemy,Ulisses
 
@@ -24,7 +25,10 @@ class CombatLevel:
             stages (tuple): tupla de listas contendo os tipos de inimigo do estágio (ex:stages=(['Fairy','Fairy']) -- estágio com duas fadas inimigas)
         """
         try:
-            self.background_img = pygame.image.load(f'./assets/{background_name}.png')
+            game_dir = Path(__file__).parent.parent
+            background_img_path = game_dir / "assets" / f"{background_name}.png"
+            self.background_img = pygame.image.load(background_img_path)
+            
             self.game_state = 0
             self.screen = screen
             self.stages = stages

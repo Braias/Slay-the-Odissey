@@ -1,9 +1,13 @@
 import random
+from pathlib import Path
 import cards
 import json
 import pygame
 
-with open(file='./assets/cards.json',mode='r') as card_config:
+game_dir = Path(__file__).parent.parent
+cards_json_path = game_dir / "assets" / "cards.json"
+
+with open(file=cards_json_path,mode='r') as card_config:
     default_card_configurations = json.load(card_config)
 
 class Deck:
