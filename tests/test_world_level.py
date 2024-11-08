@@ -5,5 +5,4 @@ from pathlib import Path
 game_dir = Path(__file__).parent.parent
 sys.path.append("game_dir/src")
 
-import main
-
+from world_level import CombatLevel
