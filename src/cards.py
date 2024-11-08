@@ -1,5 +1,14 @@
 from abc import ABC, abstractmethod
 import pygame
+
+class InsufficientEnergyError(Exception):
+    def __init__(self, message="A energia atual não é suficiente para essa carta"):
+        super().__init__(message)
+
+class WrongTargetError(Exception):
+    def __init__(self, message="A carta escolhida não pode ser aplicada no alvo selecionado"):
+        super().__init__(message)
+
 class Card(ABC):
     """
     Classe para todas as cartas a serem utilizadas nas batalhas do jogo
@@ -21,8 +30,8 @@ class Card(ABC):
         self._description = description 
         self._cost = cost 
         self._type = type 
-
-        img = pygame.image.load(f'./assets/{name}.png')
+        
+        img = pygame.image.load(f"./assets/{name}.png")
         self.sprite = pygame.transform.scale(img,(150,150))
         self.rect = self.sprite.get_rect()
         self.x_pos = 100
@@ -35,12 +44,12 @@ class Card(ABC):
 
         Levanta
         ------
-        ValueError
+        InsufficientEnergyError
             Se o custo é maior que a energia disponível pelo usuário, impede o uso da carta.
         """
         try:
             if owner.current_energy < self._cost:
-                raise ValueError
+                raise InsufficientEnergyError
         except:
             if owner.__class__.__name__ == "Enemy":
                 # lógica para a ação de jogar dos inimigos (passar pra próxima carta caso não tenha energia)
@@ -59,7 +68,6 @@ class Card(ABC):
         Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta.
         """ 
         owner.current_energy -= self._cost
-
 
 class AttackCard(Card):
     """
@@ -89,13 +97,12 @@ class AttackCard(Card):
 
         Levanta
         ------
-        KeyError
+        WrongTargetError
             Na Carta Ataque, impede o usuário de utilizar um ataque em si mesmo.
         """
         try:
             if target == owner:
-                raise KeyError  # esse card não pode ser aplicado em si mesmo
-            #TODO criar classe de erros específicos de aplicação de cartas
+                raise WrongTargetError  # esse card não pode ser aplicado em si mesmo
         except:
             pass
 
@@ -124,13 +131,12 @@ class DefenseCard(Card):
 
         Levanta
         ------
-        KeyError
+        WrongTargetError
             Na Carta Defesa, impede o usuário de utilizar defesa em um inimigo.
         """
         try:
             if target != owner:
-                raise KeyError  # esse card só pode ser aplicado em si mesmo
-            #TODO criar classe de erros específicos de aplicação de cartas
+                raise WrongTargetError  # esse card só pode ser aplicado em si mesmo
         except:
             pass
 
