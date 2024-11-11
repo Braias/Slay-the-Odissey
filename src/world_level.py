@@ -80,16 +80,17 @@ class CombatLevel:
     def execute_enemy_combat_loop(self,target:Ulisses):
         for each_enemy in self.instantiated_enemies:
             each_enemy.deck.shuffle_and_allocate() 
+            used_cards = []
             for each_card in each_enemy.deck.hand:
                 if each_enemy.current_energy >= each_card._cost:
+                    used_cards.append(each_card)
                     if each_card._type == 'attack':
                         each_card.apply_card(each_enemy,target)
                     elif each_card._type == 'defense':
                         each_card.apply_card(each_enemy,each_enemy)
-                    each_enemy.deck.discard_card(each_card)
-                    print(each_enemy.deck)
                 else:
                     break
+            each_enemy.deck.discard_card(*used_cards)
             each_enemy.current_energy = each_enemy.max_energy
 
 

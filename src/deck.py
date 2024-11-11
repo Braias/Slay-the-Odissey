@@ -64,6 +64,7 @@ class Deck:
             screen.blit(card.sprite,card.rect)
     def set_owner(self,owner):
         self.owner = owner
-    def discard_card(self,card:cards):
-        self.hand.remove(card)
-        self.discard_pile.append(card)
+    def discard_card(self,*args:cards.Card):
+        for each_card in args:
+            self.hand.remove(each_card)
+            self.discard_pile.append(each_card)
