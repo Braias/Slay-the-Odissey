@@ -60,6 +60,7 @@ class CombatLevel:
             for enemy_index,staged_enemy in enumerate(self.staged_enemies):
                 self.instantiated_enemies.append(Enemy(name=staged_enemy))
                 self.instantiated_enemies[enemy_index].x_pos -= 150*enemy_index
+                
     def next_game_state(self,ulisses:Ulisses):
         """Método responsável por limpar inimigos instanciados e prepar novos inimgos 
         caso exista outro estágio
@@ -75,8 +76,7 @@ class CombatLevel:
                 ulisses.current_life = final_health
         except IndexError as error:
             print(f'{error}: attempted to pass to next stage when no following stage existed')
-    # TODO: Atualmente Logica de combat loop 'pula' cartas ex: mao=[A,B,C]
-    # mao jogada : A -> C
+
     def execute_enemy_combat_loop(self,target:Ulisses):
         for each_enemy in self.instantiated_enemies:
             each_enemy.deck.shuffle_and_allocate() 
