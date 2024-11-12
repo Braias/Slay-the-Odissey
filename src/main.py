@@ -28,6 +28,7 @@ while running:
             for enemy in cl.instantiated_enemies:
                 if enemy.rect.collidepoint(current_mouse_pos):
                     cl.execute_enemy_combat_loop(ulisses)
+
     cl.draw_level()
     ulisses.draw_entity(screen)
     ulisses.deck.draw_hand_on_screen(screen)
