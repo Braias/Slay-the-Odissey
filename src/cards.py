@@ -56,13 +56,12 @@ class Card(ABC):
                 raise InsufficientEnergyError
         except:
             if owner.__class__.__name__ == "Enemy":
-                # lógica para a ação de jogar dos inimigos (passar pra próxima carta caso não tenha energia)
-                pass
+                # TODO lógica para a ação de jogar dos inimigos (passar pra próxima carta caso não tenha energia)
+                print("Ei, inimigo")
             else:
-                # lógica para ação do jogador (não conseguir selecionar a carta se não tiver energia e passar para resseleção)
-                pass                           
+                # TODO lógica para ação do jogador (não conseguir selecionar a carta se não tiver energia e passar para resseleção)
+                print("Ei, Ulisses")                           
 
-    @property
     @abstractmethod
     def check_target(owner, target): ...
 
@@ -94,8 +93,7 @@ class AttackCard(Card):
         super().__init__(name, description, cost, type)
         self._damage = damage
 
-    @property        
-    def check_target(target, owner):
+    def check_target(self, owner, target):
         """
         Checa a aplicabilidade da carta no alvo escolhido.
 
@@ -108,9 +106,10 @@ class AttackCard(Card):
             if target == owner:
                 raise WrongTargetError  # esse card não pode ser aplicado em si mesmo
         except:
-            pass
+            # TODO tratamento certo pra esse erro
+            print("Essa carta não pode ser aplicada em si mesmo")
 
-    def apply_card(self,owner,target):
+    def apply_card(self, owner, target):
         """
         Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta. Aqui, diminui o HP do alvo escolhido. 
         """
@@ -128,8 +127,7 @@ class DefenseCard(Card):
         super().__init__(name, description, cost, type)
         self._defense = defense
      
-    @property      
-    def check_target(target, owner):
+    def check_target(self, target, owner):
         """
         Checa a aplicabilidade da carta no alvo escolhido.
 
@@ -142,7 +140,8 @@ class DefenseCard(Card):
             if target != owner:
                 raise WrongTargetError  # esse card só pode ser aplicado em si mesmo
         except:
-            pass
+            # TODO tratamento certo pra esse erro
+            print("Essa carta não pode ser aplicada em um inimigo")
 
     def apply_card(self,owner,target):
         """
