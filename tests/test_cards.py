@@ -4,29 +4,50 @@ import sys
 from pathlib import Path
 
 game_dir = Path(__file__).parent.parent
-sys.path.append("game_dir/src")
+
+sys.path.append(f"{game_dir}/src")
 
 import cards
 
 class TestCard(unittest.TestCase):
     def setUp(self):
-        self.owner = unittest.mock.MagicMock
-        self.target = unittest.mock.MagicMock
+        self.owner = unittest.mock.MagicMock()
+        self.target = unittest.mock.MagicMock()
         
         self.owner.current_energy = 0
         self.target.current_defense = 1
         self.target.current_life = 10
 
+    @unittest.mock.patch("builtins.print")
+    def test_check_energy_enemy_logic(self, mock_print):
+        self.owner.__class__.__name__ = "Enemy"
         
-    def test_insufficient_energy_for_card(self):
-        # test_energy_card = cards.AttackCard("Tapa", "Estapeia o inimigo", cost=1, damage = 2)
+        test_energy_card = cards.AttackCard("Tapa", "Estapeia o inimigo", cost=1, damage=2)
+        test_energy_card.check_energy(self.owner)
         
-        # with self.assertRaises(cards.InsufficientEnergyError):
-        #     cards.AttackCard.check_energy(test_energy_card, self.owner)
-        pass
+        # Iserir aqui a lógica de tratamento do erro pro inimigo
+        mock_print.assert_called_once_with("Ei, inimigo!")
+
+    @unittest.mock.patch("builtins.print")
+    def test_check_energy_player_logic(self, mock_print):
+        self.owner.__class__.__name__ = "Player"
+        
+        test_energy_card = cards.AttackCard("Tapa", "Estapeia o inimigo", cost=1, damage=2)
+        test_energy_card.check_energy(self.owner)
+        
+        # Iserir aqui a lógica de tratamento do erro pro ulisses
+        mock_print.assert_called_once_with("Ei, Ulisses!")
+        
     
-    def test_wrong_target_selected(self):
-        pass
+    @unittest.mock.patch("builtins.print")
+    def test_wrong_target_selected_for_attack(self, mock_print):
+        self.owner = "Ulisses"
+        self.target = "Ulisses"
+        
+        test_wrong_target_selected_for_attack_card = cards.AttackCard("Tapa", "Estapeia o inimigo", cost=1, damage=2)
+        test_wrong_target_selected_for_attack_card.check_target(self.target, self.owner)
+        
+        mock_print.assert_called_once_with("Essa carta não pode ser aplicada em si mesma")
     
     def test_damage_bigger_than_defense(self):
         pass
