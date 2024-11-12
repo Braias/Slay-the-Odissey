@@ -15,7 +15,7 @@ class TestCard(unittest.TestCase):
         self.target = unittest.mock.MagicMock()
         
         self.owner.current_energy = 0
-        self.target.defense = 1
+        self.target.defense = 2
         self.target.current_life = 10
 
     @unittest.mock.patch("builtins.print")
@@ -57,14 +57,18 @@ class TestCard(unittest.TestCase):
     
     def test_damage_bigger_than_defense(self):
         
-        test_damage_bigger_than_defense_card = cards.AttackCard("Tapa", "Estapeia o inimigo", cost=1, damage=2)
+        test_damage_bigger_than_defense_card = cards.AttackCard("Tapa", "Estapeia o inimigo", cost=1, damage=3)
         
         test_damage_bigger_than_defense_card.apply_card(self.owner, self.target)
     
         self.assertEqual(self.target.current_life, 9) 
         
     def test_damage_smaller_than_defense(self):
-        pass
+        test_damage_smaller_than_defense_card = cards.AttackCard("Tapa", "Estapeia o inimigo", cost=1, damage=1)
+        
+        test_damage_smaller_than_defense_card.apply_card(self.owner, self.target)
+    
+        self.assertEqual(self.target.defense, 1) 
     
     def test_damage_bigger_than_hp_of_target(self):
         pass
