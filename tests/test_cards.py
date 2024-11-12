@@ -15,6 +15,7 @@ class TestCard(unittest.TestCase):
         self.target = unittest.mock.MagicMock()
         
         self.owner.current_energy = 0
+        self.owner.defense = 1
         self.target.defense = 2
         self.target.current_life = 10
 
@@ -55,7 +56,7 @@ class TestCard(unittest.TestCase):
         
         mock_print.assert_called_once_with("Essa carta não pode ser aplicada em um inimigo")
     
-    def test_damage_bigger_than_defense(self):
+    def test_attack_apply_card_with_damage_bigger_than_defense(self):
         
         test_damage_bigger_than_defense_card = cards.AttackCard("Tapa", "Estapeia o inimigo", cost=1, damage=3)
         
@@ -63,18 +64,23 @@ class TestCard(unittest.TestCase):
     
         self.assertEqual(self.target.current_life, 9) 
         
-    def test_damage_smaller_than_defense(self):
+    def test_attack_apply_card_with_damage_smaller_than_defense(self):
         test_damage_smaller_than_defense_card = cards.AttackCard("Tapa", "Estapeia o inimigo", cost=1, damage=1)
         
         test_damage_smaller_than_defense_card.apply_card(self.owner, self.target)
     
         self.assertEqual(self.target.defense, 1) 
     
-    def test_damage_bigger_than_hp_of_target(self):
+    def test_damage_after_defense_bigger_or_equal_to_hp_of_target(self):
+        # TODO matar adversário
         pass
     
-    def test_damage_smaller_than_hp_of_target(self):
-        pass
+    def test_defense_apply_card(self):
+        test_defense_card = cards.DefenseCard("Escudo", "Equipa um escudo", cost=1, defense=2)
+        
+        test_defense_card.apply_card(self.owner, self.owner)
+        
+        self.assertEqual(self.owner.defense, 3)
 
 if __name__ == "__main__":
     unittest.main()
