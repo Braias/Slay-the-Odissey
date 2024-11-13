@@ -28,6 +28,9 @@ while running:
             if ulisses.rect.collidepoint(current_mouse_pos):
                 ulisses.deck.shuffle_and_allocate()
                 cl.is_player_turn = not(cl.is_player_turn)
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_e:
+                cl.execute_enemy_combat_loop(ulisses)
 
 
     cl.draw_level()

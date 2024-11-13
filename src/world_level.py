@@ -88,6 +88,7 @@ class CombatLevel:
                 if each_enemy.current_energy >= each_card._cost:
                     used_cards.append(each_card)
                     if each_card._type == 'attack':
+                        each_enemy.enemy_attack_animation()
                         each_card.apply_card(each_enemy,target)
                     elif each_card._type == 'defense':
                         each_card.apply_card(each_enemy,each_enemy)
@@ -101,6 +102,7 @@ class CombatLevel:
                 ulisses.deck.selected_card.apply_card(ulisses,ulisses)
             for enemy in self.instantiated_enemies:
                 if enemy.rect.collidepoint(mouse_pos):
+                    ulisses.ulisses_attack_animation()
                     ulisses.deck.selected_card.apply_card(ulisses,enemy) 
         for each_card in ulisses.deck.hand:
             if each_card.rect.collidepoint(mouse_pos):

@@ -109,6 +109,9 @@ class Enemy(Entity):
                          y_pos=375)
         self.drop_xp = entity_info['drop_xp']
 
+    def enemy_attack_animation(self):
+        self.x_pos -= 100
+        #TODO achar um jeito de voltar pra posição inicial de forma mais suave
 
 class Ulisses(Entity):
     """
@@ -132,3 +135,6 @@ class Ulisses(Entity):
         self.coins = 0
         self.health_regain = 8
 
+    def ulisses_attack_animation(self):
+        self.x_pos += 100
+        #TODO achar um jeito de voltar pra posiçao inicial de forma mais suave
