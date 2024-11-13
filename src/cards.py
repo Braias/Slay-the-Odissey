@@ -42,26 +42,6 @@ class Card(ABC):
         self.y_pos = 620
         self.rect.center = (self.x_pos,self.y_pos)
     
-    def check_energy(self, owner):
-        """
-        Checagem da possibilidade do uso da carta, baseado na disponibilidade de energia no usuário da carta e no custo energético desta.  
-
-        Levanta
-        ------
-        InsufficientEnergyError
-            Se o custo é maior que a energia disponível pelo usuário, impede o uso da carta.
-        """
-        try:
-            if owner.current_energy < self._cost:
-                raise InsufficientEnergyError
-        except:
-            if owner.__class__.__name__ == "Enemy":
-                # TODO lógica para a ação de jogar dos inimigos (passar pra próxima carta caso não tenha energia)
-                print("Ei, inimigo")
-            else:
-                # TODO lógica para ação do jogador (não conseguir selecionar a carta se não tiver energia e passar para resseleção)
-                print("Ei, Ulisses")                           
-
     @abstractmethod
     def check_target(owner, target): ...
 
