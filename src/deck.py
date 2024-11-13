@@ -4,6 +4,7 @@ import cards
 import json
 import pygame
 
+
 game_dir = Path(__file__).parent.parent
 cards_json_path = game_dir / "assets" / "cards.json"
 
@@ -36,6 +37,7 @@ class Deck:
         self.discard_pile = []
         self.exhaust_pile =[]
         self.owner = None
+        self.selected_card = None
 
     def __str__(self):
         """Metodo responsavel pela representacao em string do deck
@@ -106,7 +108,10 @@ class Deck:
             screen (pygame.display): janela atual de jogo
         """
         for card in self.hand:
-            card.rect.center=(card.x_pos,card.y_pos)
+            if card == self.selected_card:
+                card.rect.center=(card.x_pos,card.y_pos-20)
+            else:
+                card.rect.center=(card.x_pos,card.y_pos)
             screen.blit(card.sprite,card.rect)
 
     def set_owner(self,owner):

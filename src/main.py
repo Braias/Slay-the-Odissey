@@ -23,17 +23,18 @@ while running:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             current_mouse_pos = pygame.mouse.get_pos()
+            if cl.is_player_turn:
+                cl.player_combat_loop(ulisses,screen,current_mouse_pos)
             if ulisses.rect.collidepoint(current_mouse_pos):
                 ulisses.deck.shuffle_and_allocate()
-            for enemy in cl.instantiated_enemies:
-                if enemy.rect.collidepoint(current_mouse_pos):
-                    cl.execute_enemy_combat_loop(ulisses)
+                cl.is_player_turn = not(cl.is_player_turn)
+
 
     cl.draw_level()
     ulisses.draw_entity(screen)
-    ulisses.deck.draw_hand_on_screen(screen)
+    if cl.is_player_turn:
+        ulisses.deck.draw_hand_on_screen(screen)
     pygame.display.flip()
-
     clock.tick(60)
 
 pygame.quit()

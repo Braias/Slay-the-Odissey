@@ -34,6 +34,7 @@ class CombatLevel:
             self.stages = stages
             self.staged_enemies = stages[self.game_state]
             self.instantiated_enemies = []
+            self.is_player_turn = False
         except FileNotFoundError as error:
             print(f"{error}: background assest not found in 'assets")
 
@@ -49,7 +50,8 @@ class CombatLevel:
         """Método responsável por desenhar inimigos na tela do jogador 
         """
         for instantiated_enemy in self.instantiated_enemies:
-            instantiated_enemy.draw_entity(screen=self.screen)
+            if instantiated_enemy.is_alive:
+                instantiated_enemy.draw_entity(screen=self.screen)
 
     def instantiate_enemies(self):
         """Método responsável por instanciar todos inimigos do estágio caso não existam
@@ -70,6 +72,7 @@ class CombatLevel:
             self.staged_enemies = self.stages[self.game_state]
             self.instantiated_enemies = []
             final_health = ulisses.current_life + ulisses.health_regain
+            ulisses.defense = 0 
             if final_health > ulisses.max_hp:
                 ulisses.current_life = ulisses.max_hp
             else:
@@ -92,6 +95,16 @@ class CombatLevel:
                     break
             each_enemy.deck.discard_card(*used_cards)
             each_enemy.current_energy = each_enemy.max_energy
+    def player_combat_loop(self,ulisses:Ulisses,screen:pygame.display,mouse_pos:tuple):
+        if ulisses.deck.selected_card:
+            if ulisses.rect.collidepoint(mouse_pos):
+                ulisses.deck.selected_card.apply_card(ulisses,ulisses)
+            for enemy in self.instantiated_enemies:
+                if enemy.rect.collidepoint(mouse_pos):
+                    ulisses.deck.selected_card.apply_card(ulisses,enemy) 
+        for each_card in ulisses.deck.hand:
+            if each_card.rect.collidepoint(mouse_pos):
+                ulisses.deck.selected_card = each_card       
 
 
                     

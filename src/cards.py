@@ -73,32 +73,31 @@ class AttackCard(Card):
         super().__init__(name, description, cost, type)
         self._damage = damage
 
-    def check_target(self, owner, target):
+    def check_target(self, owner, target) -> bool:
         """
         Checa a aplicabilidade da carta no alvo escolhido.
 
-        Levanta
-        ------
-        WrongTargetError
-            Na Carta Ataque, impede o usuário de utilizar um ataque em si mesmo.
+        Parametros
+        ----------
+
         """
-        try:
-            if target == owner:
-                raise WrongTargetError  # esse card não pode ser aplicado em si mesmo
-        except:
-            # TODO tratamento certo pra esse erro
-            print("Essa carta não pode ser aplicada em si mesmo")
+        # esse card não pode ser aplicado em si mesmo
+        if target == owner:
+                return False
+        else:
+            return True
 
     def apply_card(self, owner, target):
         """
         Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta. Aqui, diminui o HP do alvo escolhido. 
         """
-        if target.defense - self._damage < 0:
-            # Subtrai a diferença entre o dano e a defesa da vida atual do alvo
-            target.current_life -= (self._damage - target.defense)
-        else:
-           target.defense -= self._damage
-        super().apply_card(owner,target)
+        if self.check_target(owner,target):
+            if target.defense - self._damage < 0:
+                # Subtrai a diferença entre o dano e a defesa da vida atual do alvo
+                target.current_life -= (self._damage - target.defense)
+            else:
+                target.defense -= self._damage
+            super().apply_card(owner,target)
     
 
 class DefenseCard(Card):
@@ -106,25 +105,24 @@ class DefenseCard(Card):
         super().__init__(name, description, cost, type)
         self._defense = defense
      
-    def check_target(self, target, owner):
+    def check_target(self, target, owner) -> bool:
         """
         Checa a aplicabilidade da carta no alvo escolhido.
 
-        Levanta
-        ------
-        WrongTargetError
-            Na Carta Defesa, impede o usuário de utilizar defesa em um inimigo.
+        Parametros 
+        ----------
+
         """
-        try:
-            if target != owner:
-                raise WrongTargetError  # esse card só pode ser aplicado em si mesmo
-        except:
-            # TODO tratamento certo pra esse erro
-            print("Essa carta não pode ser aplicada em um inimigo")
+        if target != owner:
+            # esse card só pode ser aplicado em si mesmo
+            return False
+        else:
+            return True
 
     def apply_card(self,owner,target):
         """
         Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta. Aqui, aumenta a defesa do usuário. 
         """
-        target.defense += self._defense
-        super().apply_card(owner,target)
+        if self.check_target(owner,target):
+            target.defense += self._defense
+            super().apply_card(owner,target)
