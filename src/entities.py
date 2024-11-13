@@ -69,24 +69,28 @@ class Entity:
         """
         self.rect.center = (self.x_pos,self.y_pos)
         screen.blit(self.sprite,self.rect)
-        self.draw_health_bar(screen)
+        self.draw_status_bar(screen)
 
-    def draw_health_bar(self,screen:pygame.display):
+    def draw_status_bar(self,screen:pygame.display):
+
         entity_left_corner_x_pos = self.x_pos-75
         entity_left_corner_y_pos = self.y_pos-75
+
         text_font = pygame.font.SysFont('Arial',18)
-        text_img = text_font.render(f'{self.current_life}/{self.max_hp}',True,'white')
-
+        hp_text_img = text_font.render(f'{self.current_life}/{self.max_hp}',True,'white')
+        defnse_text_img = text_font.render(f'{self.defense}',True,'white')
         health_bar_size = 100 * (self.current_life/self.max_hp)
-
         # deslocamento nas posições x e y para dar margem ao sprite
-        health_bar_bg_rect = pygame.Rect(entity_left_corner_x_pos+25,entity_left_corner_y_pos-15,100,20)
-        health_bar_rect = pygame.Rect(entity_left_corner_x_pos+25,entity_left_corner_y_pos-15,health_bar_size,20)
-
+        defense_status_rect = pygame.Rect(entity_left_corner_x_pos+110,entity_left_corner_y_pos-15,30,20)
+        health_bar_bg_rect = pygame.Rect(entity_left_corner_x_pos+10,entity_left_corner_y_pos-15,100,20)
+        health_bar_rect = pygame.Rect(entity_left_corner_x_pos+10,entity_left_corner_y_pos-15,health_bar_size,20)
 
         pygame.draw.rect(screen,'grey',health_bar_bg_rect)
         pygame.draw.rect(screen,'red',health_bar_rect)
-        screen.blit(text_img,(entity_left_corner_x_pos+25,entity_left_corner_y_pos-15))
+        pygame.draw.rect(screen,'blue',defense_status_rect)
+
+        screen.blit(hp_text_img,(entity_left_corner_x_pos+10,entity_left_corner_y_pos-15))
+        screen.blit(defnse_text_img,(entity_left_corner_x_pos+110,entity_left_corner_y_pos-15))
 
 
 class Enemy(Entity):
@@ -127,3 +131,4 @@ class Ulisses(Entity):
         self.xp = 0
         self.coins = 0
         self.health_regain = 8
+
