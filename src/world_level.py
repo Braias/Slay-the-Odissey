@@ -34,7 +34,7 @@ class CombatLevel:
             self.stages = stages
             self.staged_enemies = stages[self.game_state]
             self.instantiated_enemies = []
-            self.is_player_turn = False
+            self.is_player_turn = True
         except FileNotFoundError as error:
             print(f"{error}: background assest not found in 'assets")
 
@@ -81,32 +81,53 @@ class CombatLevel:
             print(f'{error}: attempted to pass to next stage when no following stage existed')
 
     def execute_enemy_combat_loop(self,target:Ulisses):
+        """Metodo responsavel pelo ataque automatico de inimigos no jogo
+
+        Args:
+            target (Ulisses): alvo prinicpal de todo inimigo smepre sera o protagonista
+        """
         for each_enemy in self.instantiated_enemies:
+            # No final de cada rodada usamos o shuffle and allcoate 
+            # Isso limpa a mao antiga do inimigo e aleatoriamente aloca um anova
             each_enemy.deck.shuffle_and_allocate() 
-            used_cards = []
-            for each_card in each_enemy.deck.hand:
-                if each_enemy.current_energy >= each_card._cost:
-                    used_cards.append(each_card)
-                    if each_card._type == 'attack':
-                        each_enemy.enemy_attack_animation()
-                        each_card.apply_card(each_enemy,target)
-                    elif each_card._type == 'defense':
-                        each_card.apply_card(each_enemy,each_enemy)
-                else:
-                    break
-            each_enemy.deck.discard_card(*used_cards)
+            # Enquanto o Inimigo tiver energia e Nao tiver exausto seu deck inteiro lutamos
+            while each_enemy.current_energy > 0 and len(each_enemy.deck.hand) > 0 and each_enemy.is_alive:
+                # Selecionamos smepre a primeira carta do baralho
+                each_enemy.deck.selected_card = each_enemy.deck.hand[0]
+                if each_enemy.deck.selected_card._type == 'attack':
+                    each_enemy.deck.selected_card.apply_card(each_enemy,target)
+                elif each_enemy.deck.selected_card._type == 'defense':
+                    each_enemy.deck.selected_card.apply_card(each_enemy,each_enemy)
+                # Caso o inimgo nao tenha energia para jogar a carta atual ainda queremos 
+                # olhar proximas cartas, assim descartamos a carta atual e prosseguimos
+                if each_enemy.deck.selected_card in each_enemy.deck.hand:
+                    each_enemy.deck.discard_card(each_enemy.deck.selected_card)
+
+
+    def player_combat_loop(self,ulisses:Ulisses,mouse_pos:tuple):
+        if ulisses.is_alive:
+            if ulisses.deck.selected_card:
+                if ulisses.rect.collidepoint(mouse_pos):
+                    ulisses.deck.selected_card.apply_card(ulisses,ulisses)
+                for enemy in self.instantiated_enemies:
+                    if enemy.rect.collidepoint(mouse_pos) and enemy.is_alive:
+                        ulisses.deck.selected_card.apply_card(ulisses,enemy) 
+            for each_card in ulisses.deck.hand:
+                if each_card.rect.collidepoint(mouse_pos):
+                    if each_card == ulisses.deck.selected_card:
+                        ulisses.deck.selected_card = None
+                    else:
+                        ulisses.deck.selected_card = each_card  
+
+    def end_player_turn(self,ulisses:Ulisses):
+        self.is_player_turn = False
+        ulisses.current_energy = ulisses.max_energy
+        ulisses.deck.shuffle_and_allocate()
+
+    def end_enemies_turn(self):
+        self.is_player_turn = True  
+        for each_enemy in self.instantiated_enemies:
             each_enemy.current_energy = each_enemy.max_energy
-    def player_combat_loop(self,ulisses:Ulisses,screen:pygame.display,mouse_pos:tuple):
-        if ulisses.deck.selected_card:
-            if ulisses.rect.collidepoint(mouse_pos):
-                ulisses.deck.selected_card.apply_card(ulisses,ulisses)
-            for enemy in self.instantiated_enemies:
-                if enemy.rect.collidepoint(mouse_pos):
-                    ulisses.ulisses_attack_animation()
-                    ulisses.deck.selected_card.apply_card(ulisses,enemy) 
-        for each_card in ulisses.deck.hand:
-            if each_card.rect.collidepoint(mouse_pos):
-                ulisses.deck.selected_card = each_card       
 
 
                     

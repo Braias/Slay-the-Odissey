@@ -58,8 +58,8 @@ class Deck:
         atual do jogador no inicio de cada round d combate
         """
         # limpar mao atual e mover para pilha de descarte
-        self.discard_pile += self.hand 
-        self.hand = []     
+        self.discard_card(*self.hand)    
+        self.selected_card = None
         # Checamos quantas cartas estão disponíveis
         cards_to_draw = len(self.draw_pile) 
         # Caso não temos cartas suficentes para formar uma mão adcionamos do deck de descarte
@@ -109,7 +109,7 @@ class Deck:
         """
         for card in self.hand:
             if card == self.selected_card:
-                card.rect.center=(card.x_pos,card.y_pos-20)
+                card.rect.center=(card.x_pos,card.y_pos-30)
             else:
                 card.rect.center=(card.x_pos,card.y_pos)
             screen.blit(card.sprite,card.rect)

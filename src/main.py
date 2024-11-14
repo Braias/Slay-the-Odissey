@@ -1,7 +1,6 @@
 # Example file showing a basic pygame "game loop" 
 import pygame
 import entities
-from deck import Deck
 from world_level import CombatLevel
 pygame.init()
 
@@ -13,7 +12,7 @@ running = True
 
 ulisses = entities.Ulisses()
 
-cl = CombatLevel(screen=screen,background_name='test_bg',stages=(['Ogre'],['King']))
+cl = CombatLevel(screen=screen,background_name='test_bg',stages=(['Ogre','King'],['King']))
 
 index = True
 while running:
@@ -24,19 +23,21 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             current_mouse_pos = pygame.mouse.get_pos()
             if cl.is_player_turn:
-                cl.player_combat_loop(ulisses,screen,current_mouse_pos)
-            if ulisses.rect.collidepoint(current_mouse_pos):
-                ulisses.deck.shuffle_and_allocate()
-                cl.is_player_turn = not(cl.is_player_turn)
+                cl.player_combat_loop(ulisses,current_mouse_pos)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_e:
-                cl.execute_enemy_combat_loop(ulisses)
+                cl.end_player_turn(ulisses)
+            elif event.key == pygame.K_SPACE:
+                ulisses.deck.shuffle_and_allocate()
 
 
     cl.draw_level()
     ulisses.draw_entity(screen)
     if cl.is_player_turn:
         ulisses.deck.draw_hand_on_screen(screen)
+    else:
+        cl.execute_enemy_combat_loop(ulisses)
+        cl.end_enemies_turn()
     pygame.display.flip()
     clock.tick(60)
 

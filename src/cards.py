@@ -52,6 +52,7 @@ class Card(ABC):
         """ 
         owner.current_energy -= self._cost
 
+
 class AttackCard(Card):
     """
     Classe Filha de Card, referente às cartas de Ataque, que diminuem HP do alvo.
@@ -91,14 +92,26 @@ class AttackCard(Card):
         """
         Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta. Aqui, diminui o HP do alvo escolhido. 
         """
-        if self.check_target(owner,target):
-            if target.defense - self._damage < 0:
+        if self.check_target(owner,target) and owner.current_energy >= self._cost and target.is_alive:
+            
+            if target.current_defense < self._damage:
                 # Subtrai a diferença entre o dano e a defesa da vida atual do alvo
-                target.current_life -= (self._damage - target.defense)
+                new_target_hp = target.current_life - (self._damage - target.current_defense)
+                if new_target_hp <= 0:
+                    target.current_life = 0 
+                    target.is_alive = False
+                else:
+                    target.current_life = new_target_hp
+                target.current_defense = 0 
             else:
-                target.defense -= self._damage
+                target.current_defense -= self._damage
             super().apply_card(owner,target)
-    
+            owner.deck.discard_card(self)
+            owner.deck.selected_card = None
+            owner.attack_animate()
+            target.hit_animate()
+            if not target.is_alive:
+                target.death_animate()
 
 class DefenseCard(Card):
     def __init__(self, name, description, cost, defense: int, type="defense"):
@@ -123,6 +136,14 @@ class DefenseCard(Card):
         """
         Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta. Aqui, aumenta a defesa do usuário. 
         """
-        if self.check_target(owner,target):
-            target.defense += self._defense
+        if self.check_target(owner,target) and owner.current_energy >= self._cost and owner.is_alive:
+            new_defense = target.current_defense + self._defense
+            if new_defense > target.max_defense:
+                target.current_defense = target.max_defense
+            else:
+                target.current_defense = new_defense
             super().apply_card(owner,target)
+            owner.deck.discard_card(self)
+            owner.deck.selected_card = None
+            owner.defense_animate()
+        

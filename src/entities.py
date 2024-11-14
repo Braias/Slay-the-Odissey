@@ -2,6 +2,7 @@ from pathlib import Path
 import pygame
 from deck import Deck
 import json
+from abc import ABC, abstractmethod
 
 game_dir = Path(__file__).parent.parent
 entities_json_path = game_dir / "assets" / "entities.json"
@@ -9,7 +10,7 @@ entities_json_path = game_dir / "assets" / "entities.json"
 with open(file=entities_json_path,mode='r') as enemy_config:
     default_entity_configurations = json.load(enemy_config)
 
-class Entity:
+class Entity(ABC):
     """
     Classe que representa uma entidade qualquer no jogo, dentre as possibilidades estabelecidas.
 
@@ -37,7 +38,8 @@ class Entity:
     def __init__(self,name:str,x_pos:int,y_pos:int):
         try:
             entity_info = default_entity_configurations['entities'][name]
-            self.defense = 0
+            self.max_defense = 25
+            self.current_defense = 0
             self.is_alive = True
             self.current_life = entity_info['max_hp']
             self.max_hp = entity_info['max_hp']
@@ -58,6 +60,7 @@ class Entity:
             print(f"{error}: assest of name {self.name} was not found in folder 'assets'")
     def __str__(self):
         return f"name:{self.name}\ndeck:{self.deck.__str__()}\nenergy:{self.current_energy}/{self.max_energy}"
+    
     def draw_entity(self,screen:pygame.display):
         """
         Função que desenha uma entidade qualquer do jogo, por meio do método screen.blit.
@@ -70,28 +73,42 @@ class Entity:
         self.rect.center = (self.x_pos,self.y_pos)
         screen.blit(self.sprite,self.rect)
         self.draw_status_bar(screen)
+    
+    def __draw_status_rectangle(self,screen:pygame.display,background_width:int,height:int,dyanamic_bar_size:int,
+                                x:int,y:int, primary_color:str, bg_color:str):
+        
+        pygame.draw.rect(screen,bg_color, pygame.Rect(x, y, background_width, height))
+        pygame.draw.rect(screen, primary_color, pygame.Rect(x, y, dyanamic_bar_size, height))
 
-    def draw_status_bar(self,screen:pygame.display):
+    def draw_status_bar(self, screen: pygame.display):
+        # Coordenadas Base e dimensoes para retangulos - deslocados para canto esquero do personagem
+        x, y = self.x_pos - 75, self.y_pos - 75
+        background_width = 100
 
-        entity_left_corner_x_pos = self.x_pos-75
-        entity_left_corner_y_pos = self.y_pos-75
+        # Rendereizando fonte e calculando tamanho de cada barra
+        hp_text_img = pygame.font.SysFont('Arial', 18).render(f'{self.current_life}/{self.max_hp}', True, 'white')
+        health_bar_size = background_width * (self.current_life / self.max_hp)
+        defense_bar_size = background_width * (self.current_defense / self.max_defense)
 
-        text_font = pygame.font.SysFont('Arial',18)
-        hp_text_img = text_font.render(f'{self.current_life}/{self.max_hp}',True,'white')
-        defnse_text_img = text_font.render(f'{self.defense}',True,'white')
-        health_bar_size = 100 * (self.current_life/self.max_hp)
-        # deslocamento nas posições x e y para dar margem ao sprite
-        defense_status_rect = pygame.Rect(entity_left_corner_x_pos+110,entity_left_corner_y_pos-15,30,20)
-        health_bar_bg_rect = pygame.Rect(entity_left_corner_x_pos+10,entity_left_corner_y_pos-15,100,20)
-        health_bar_rect = pygame.Rect(entity_left_corner_x_pos+10,entity_left_corner_y_pos-15,health_bar_size,20)
+        self.__draw_status_rectangle(screen, background_width, 20, health_bar_size,  x + 25, y - 23, 'red', 'grey')
+        self.__draw_status_rectangle(screen, background_width,  5, defense_bar_size, x + 25, y, 'blue', 'gray')
 
-        pygame.draw.rect(screen,'grey',health_bar_bg_rect)
-        pygame.draw.rect(screen,'red',health_bar_rect)
-        pygame.draw.rect(screen,'blue',defense_status_rect)
+        # Desenhar texto indicador de vida atual
+        screen.blit(hp_text_img, (x + 25, y - 23))
 
-        screen.blit(hp_text_img,(entity_left_corner_x_pos+10,entity_left_corner_y_pos-15))
-        screen.blit(defnse_text_img,(entity_left_corner_x_pos+110,entity_left_corner_y_pos-15))
+    def hit_animate(self):
+        #hit_duration = 
+        pass
+    def defense_animate(self):
+        pass
 
+    def death_animate(self):
+            img_path = game_dir / "assets" / "death" / f"RIP.png"
+            img = pygame.image.load(img_path)
+            self.sprite = pygame.transform.scale(img,(150,150)) 
+    @abstractmethod
+    def attack_animate(self):...
+    
 
 class Enemy(Entity):
     """
@@ -109,10 +126,8 @@ class Enemy(Entity):
                          y_pos=375)
         self.drop_xp = entity_info['drop_xp']
 
-    def enemy_attack_animation(self):
-        self.x_pos -= 100
-        #TODO achar um jeito de voltar pra posição inicial de forma mais suave
-
+    def attack_animate(self):
+        pass
 class Ulisses(Entity):
     """
     Classe que representa o personagem principal - herdando da classe 'Entity'.
@@ -135,6 +150,13 @@ class Ulisses(Entity):
         self.coins = 0
         self.health_regain = 8
 
-    def ulisses_attack_animation(self):
-        self.x_pos += 100
-        #TODO achar um jeito de voltar pra posiçao inicial de forma mais suave
+    def attack_animate(self):
+        pass
+    def draw_status_bar(self,screen:pygame.display):
+        super().draw_status_bar(screen)
+        energy_text_img = pygame.font.SysFont('Arial', 34).render(f'{self.current_energy}', True, 'white')
+        pygame.draw.circle(screen,pygame.Color('#3dad62'),(75,500),20)
+        screen.blit(energy_text_img,(65,480))
+
+    def insufficient_energy_animate(self):
+        pass
