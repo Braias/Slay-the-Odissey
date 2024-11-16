@@ -12,7 +12,7 @@ running = True
 
 ulisses = entities.Ulisses()
 
-cl = CombatLevel(screen=screen,background_name='test_bg',stages=(['Ogre','King'],['King']))
+cl = CombatLevel(screen=screen,background_name='test_bg',stages=(['Ogre','King'], ['King']))
 
 index = True
 while running:
@@ -29,7 +29,9 @@ while running:
                 cl.end_player_turn(ulisses)
             elif event.key == pygame.K_SPACE:
                 ulisses.deck.shuffle_and_allocate()
-
+            elif event.key == pygame.K_a:
+                print("bundaa")
+                ulisses.attack_animate()
 
     cl.draw_level()
     ulisses.draw_entity(screen)

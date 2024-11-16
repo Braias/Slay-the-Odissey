@@ -3,6 +3,7 @@ import pygame
 from deck import Deck
 import json
 from abc import ABC, abstractmethod
+import copy
 
 game_dir = Path(__file__).parent.parent
 entities_json_path = game_dir / "assets" / "entities.json"
@@ -38,7 +39,7 @@ class Entity(ABC):
     def __init__(self,name:str,x_pos:int,y_pos:int):
         try:
             entity_info = default_entity_configurations['entities'][name]
-            self.max_defense = 25
+            self.max_defense = 250
             self.current_defense = 0
             self.is_alive = True
             self.current_life = entity_info['max_hp']
@@ -149,9 +150,32 @@ class Ulisses(Entity):
         self.xp = 0
         self.coins = 0
         self.health_regain = 8
+        self.speed = 50
 
     def attack_animate(self):
-        pass
+        self.x_pos += 100
+        attacking = True
+        backing = False
+        attack_distance = 100
+        original_x = copy.deepcopy(self.x_pos)
+        while attacking:
+            print("atacando")
+            self.x_pos += self.speed
+            if self.x_pos - original_x >= attack_distance:
+                print("parei de atacar")
+                attacking = False
+                backing = True
+        while backing:
+            print("voltando")
+            self.x_pos -= self.speed
+            if self.x_pos - original_x <= 0:
+                print("parei de voltar")
+                backing = False
+        
+
+
+
+
     def draw_status_bar(self,screen:pygame.display):
         super().draw_status_bar(screen)
         energy_text_img = pygame.font.SysFont('Arial', 34).render(f'{self.current_energy}', True, 'white')

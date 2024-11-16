@@ -84,7 +84,7 @@ class AttackCard(Card):
         """
         # esse card não pode ser aplicado em si mesmo
         if target == owner:
-                return False
+            return False
         else:
             return True
 

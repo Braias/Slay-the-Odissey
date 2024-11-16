@@ -2,7 +2,7 @@
     "entities": {
         "Ulisses":{
             "max_hp":80,
-            "max_energy":3,
+            "max_energy":4,
             "draw_pile": ["Facada","Facada","Facada","Cabecada","Escudo","Escudo",
                             "Facada","Facada","Facada","Cabecada","Escudo","Escudo"]
         },
@@ -14,13 +14,13 @@
         },
         "Ogre": {
             "drop_xp": 200,
-            "max_hp": 300,
+            "max_hp": 40,
             "max_energy": 2,
             "draw_pile": ["Facada","Tapa","Escudo"]
         },
         "King": {
             "drop_xp": 500,
-            "max_hp": 500,
+            "max_hp": 30,
             "max_energy": 3,
             "draw_pile": ["Facada","Tapa","Escudo"]
         }

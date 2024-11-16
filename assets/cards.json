@@ -3,7 +3,7 @@
         "Facada":{
             "name":"Facada",
             "description":"Esfaqueia o inimigo",
-            "cost":2,
+            "cost":1,
             "damage":30,
             "type":"attack"
         },
@@ -11,7 +11,7 @@
             "name":"Tapa",
             "description":"Estapeia o inimigo, ",
             "cost": 0,
-            "damage": 5,
+            "damage": 10,
             "type":"attack"
         },
         "Cabecada":{
@@ -25,7 +25,7 @@
             "name":"Escudo",
             "description":"Equipa um escudo",
             "cost":1,
-            "defense":15,
+            "defense":115,
             "type":"defense"
         }
     }

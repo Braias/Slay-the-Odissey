@@ -87,7 +87,7 @@ class CombatLevel:
             target (Ulisses): alvo prinicpal de todo inimigo smepre sera o protagonista
         """
         for each_enemy in self.instantiated_enemies:
-            # No final de cada rodada usamos o shuffle and allcoate 
+            # No inicio de cada rodada usamos o shuffle and allcoate 
             # Isso limpa a mao antiga do inimigo e aleatoriamente aloca um anova
             each_enemy.deck.shuffle_and_allocate() 
             # Enquanto o Inimigo tiver energia e Nao tiver exausto seu deck inteiro lutamos
