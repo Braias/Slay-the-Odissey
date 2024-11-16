@@ -61,14 +61,6 @@ class MapScreen(Screen):
         if self.choosen_node != None:
             return self.choosen_node.screen
 
-    # # Deprecated
-    # def get(self):
-    #     node = self.choosen_node
-    #     self.choosen_node = None
-    #     if node != None:
-    #         self._scroll_to(node)
-    #         return node.data
-
     def draw(self):
         self.target.fill((0,0,0))
         self.target.blit(self.map_sprite, self.pos)
