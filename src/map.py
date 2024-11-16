@@ -5,18 +5,18 @@ import pygame
 from map_node import MapNode, MapNodeType, Point
 import math
 import random
+from screen import Screen
 
 
 SCROLL_SPEED = 7
 MARGIN = 20
 
 
-class MapScreen(pygame.Surface):
+class MapScreen(Screen):
     def __init__(self, target: pygame.Surface, root: MapNode):
         self._load_sprites()
-        pygame.Surface.__init__(self, self.map_sprite.get_size(), pygame.SRCALPHA)
         self.pos = pygame.math.Vector2(target.get_size())
-        self.pos -= self.get_size()
+        self.pos -= self.map_sprite.get_size()
         self.pos /= 2
 
         self.target = target
@@ -57,21 +57,24 @@ class MapScreen(pygame.Surface):
                 self.scroll_interval[1],
             )
 
-    # Deprecated
-    def get(self):
-        node = self.choosen_node
-        self.choosen_node = None
-        if node != None:
-            self._scroll_to(node)
-            return node.data
+    def update(self):
+        if self.choosen_node != None:
+            return self.choosen_node.screen
 
-    def render(self):
-        self.blit(self.map_sprite, (0,0))
+    # # Deprecated
+    # def get(self):
+    #     node = self.choosen_node
+    #     self.choosen_node = None
+    #     if node != None:
+    #         self._scroll_to(node)
+    #         return node.data
+
+    def draw(self):
+        self.target.fill((0,0,0))
+        self.target.blit(self.map_sprite, self.pos)
 
         for node in self.nodes:
             self._render_node(node)
-
-        self.target.blit(self, self.pos)
 
     # Torna o nó atual visível na região inferior da tela, alterando a posição
     # Y em que o mapa é desenhado
@@ -112,13 +115,9 @@ class MapScreen(pygame.Surface):
             self.current_node = self.hovered_node
             self.choosen_node = self.hovered_node
             self.hovered_node = None
-
-            return self.current_node.data
         else:
             self.scrolling = True
             self.scroll_initial_y = mouse_pos[1] - self.pos.y
-            
-        return None
 
     def _mouse_up(self, mouse_pos: Point, button: int):
         if button == 1:
@@ -194,7 +193,7 @@ class MapScreen(pygame.Surface):
 
         sprite = self.node_sprites[sprite_id]
         w, h = sprite.get_size()
-        self.blit(sprite, node.pos - (w >> 1, h >> 1))
+        self.target.blit(sprite, node.pos - (w >> 1, h >> 1) + self.pos)
 
     # O raio de um nó. Usado para detecção do hover do mouse e para saber até
     # onde desenhar os caminhos que incidem no nó em `_bake_trail`
