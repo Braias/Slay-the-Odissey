@@ -21,3 +21,6 @@ class Screen(ABC):
     @abstractmethod
     def draw(self):
         ...
+
+    def onenter(self):
+        pass

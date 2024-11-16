@@ -1,6 +1,6 @@
+import math
 import pygame
 from screen import Screen
-import math
 
 
 
@@ -10,25 +10,20 @@ import math
 
 from map import MapScreen
 from map_node import MapNode, MapNodeType
-
-class TestScreen(Screen):
-    def __init__(self, surface: pygame.Surface):
-        self.surface = surface
-
-    def handle_event(self, event: pygame.event.Event):
-        pass
-
-    def update(self):
-        pass
-
-    def draw(self):
-        pygame.draw.rect(self.surface, (255,100,0), (100, 100, 100, 100))
+from fireplace import FireplaceScreen
 
 def init(surface: pygame.Surface):
-    root = MapNode((220, 450), MapNodeType.STORY, None)
-    root.add_child(MapNode((210, 350), MapNodeType.BATTLE, TestScreen(surface)))
+    map = MapScreen(surface)
+    fireplace = FireplaceScreen(surface, map, 20)
 
-    return MapScreen(surface, root)
+    root = MapNode((220, 450), MapNodeType.STORY, None)
+    child = MapNode((250, 350), MapNodeType.FIREPLACE, fireplace)
+    root.add_child(child)
+    child.add_child(MapNode((200, 270), MapNodeType.FIREPLACE, fireplace))
+
+    map.load(root)
+
+    return map
 
 # fim Temporário ---------------------
 
@@ -49,6 +44,7 @@ clock = pygame.time.Clock()
 running = True
 
 current_screen = init(downscaled_surface)
+current_screen.onenter()
 
 transition_progress = math.pi / 2 # Para ter uma transição no início do jogo
 transition_surface = pygame.Surface(downscaled_surface.get_size())
@@ -68,6 +64,7 @@ while running:
         # toda preta, para o jogador não perceber
         if transition_progress > math.pi / 2 and transition_to != None:
             current_screen = transition_to
+            current_screen.onenter()
             transition_to = None
 
         # "Desenha" a transição sobre a surface principal.

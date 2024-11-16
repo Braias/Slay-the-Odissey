@@ -7,9 +7,10 @@ Point = tuple[int, int]
 
 
 class MapNodeType(Enum):
-    STORY = 0
-    BATTLE = 1
-    BOSS = 2
+    FIREPLACE = 0
+    STORY = 1
+    BATTLE = 2
+    BOSS = 3
 
 
 class MapNode:

@@ -13,29 +13,36 @@ MARGIN = 20
 
 
 class MapScreen(Screen):
-    def __init__(self, target: pygame.Surface, root: MapNode):
+    def __init__(self, surface: pygame.Surface):
         self._load_sprites()
-        self.pos = pygame.math.Vector2(target.get_size())
+        self.pos = pygame.math.Vector2(surface.get_size())
         self.pos -= self.map_sprite.get_size()
         self.pos /= 2
 
-        self.target = target
+        self.surface = surface
         
-        self.root = root
-        self.nodes = set([root])
-        self._add_children(root)
-
         self.hovered_node = None
-        self.current_node = root
+        self.current_node = None
         self.choosen_node = None
-        root.activate()
 
         self.scrolling = False
         self.scroll_initial_y = 0
-
         self.scroll_interval = (self.pos.y * 2 - MARGIN, MARGIN)
-        self._scroll_to(root)
 
+    def load(self, root: MapNode):
+        def add_children(n):
+            self.nodes.update(n.children)
+            for child in n.children:
+                add_children(child)
+        
+        self.nodes = set([root])
+        add_children(root)
+
+        self.current_node = root
+        root.activate()
+
+        self._scroll_to(root)
+        
         for node in self.nodes:
             self._bake_trail(node)
 
@@ -59,11 +66,13 @@ class MapScreen(Screen):
 
     def update(self):
         if self.choosen_node != None:
-            return self.choosen_node.screen
+            tmp = self.choosen_node.screen
+            self.choosen_node = None
+            return tmp
 
     def draw(self):
-        self.target.fill((0,0,0))
-        self.target.blit(self.map_sprite, self.pos)
+        self.surface.fill((0,0,0))
+        self.surface.blit(self.map_sprite, self.pos)
 
         for node in self.nodes:
             self._render_node(node)
@@ -72,7 +81,7 @@ class MapScreen(Screen):
     # Y em que o mapa é desenhado
     def _scroll_to(self, node: MapNode):
         self.pos.y = pygame.math.clamp(
-            (self.target.get_height() * 3/4) - node.pos.y,
+            (self.surface.get_height() * 3/4) - node.pos.y,
             self.scroll_interval[0],
             self.scroll_interval[1],
         )
@@ -120,26 +129,25 @@ class MapScreen(Screen):
 
         ss = pygame.image.load("assests/map_icons.png").convert_alpha()
         self.node_sprites = [
-            ss.subsurface((142, 0,  48, 48)), # nó de batalha inacessível
-            ss.subsurface((142, 48, 48, 48)), # nó de história inacessível
-            ss.subsurface((128, 96, 64, 64)), # nó de boss inacessível
+            ss.subsurface((144, 0,  48, 48)), # nó de fogueira distante
+            ss.subsurface((144, 48,  48, 48)), # nó de história distante
+            ss.subsurface((144, 96, 48, 48)), # nó de batalha distante
+            ss.subsurface((128, 144, 64, 64)), # nó de boss distante
             ss.subsurface((96,  0,  48, 48)), # nó ... já visitado
             ss.subsurface((96,  48, 48, 48)),
-            ss.subsurface((0,   96, 64, 64)),
+            ss.subsurface((96,  96, 48, 48)),
+            ss.subsurface((0,   144, 64, 64)),
             ss.subsurface((0,   0,  48, 48)), # nó ... acessível
             ss.subsurface((0,   48, 48, 48)),
-            ss.subsurface((0,   96, 64, 64)),
+            ss.subsurface((0,   96, 48, 48)),
+            ss.subsurface((0,   144, 64, 64)),
             ss.subsurface((48,  0,  48, 48)), # nó ... sendo selecionado
             ss.subsurface((48,  48, 48, 48)),
-            ss.subsurface((64,  96, 64, 64)),
+            ss.subsurface((48,  96, 48, 48)),
+            ss.subsurface((64,  144, 64, 64)),
         ]
 
         self.trail_marks_sprite = pygame.image.load("assests/map_trail_marks.png").convert_alpha()
-
-    def _add_children(self, node: MapNode):
-        self.nodes.update(node.children)
-        for child in node.children:
-            self._add_children(child)
 
     # Desenha as arestas entre um nó e todos os seus "filhos". O desenho é feito
     # diretamente na textura do mapa ao invés de na tela, o que permite com que
@@ -185,7 +193,7 @@ class MapScreen(Screen):
 
         sprite = self.node_sprites[sprite_id]
         w, h = sprite.get_size()
-        self.target.blit(sprite, node.pos - (w >> 1, h >> 1) + self.pos)
+        self.surface.blit(sprite, node.pos - (w >> 1, h >> 1) + self.pos)
 
     # O raio de um nó. Usado para detecção do hover do mouse e para saber até
     # onde desenhar os caminhos que incidem no nó em `_bake_trail`
