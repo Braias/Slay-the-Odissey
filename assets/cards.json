@@ -25,7 +25,7 @@
             "name":"Escudo",
             "description":"Equipa um escudo",
             "cost":1,
-            "defense":115,
+            "defense":25,
             "type":"defense"
         }
     }

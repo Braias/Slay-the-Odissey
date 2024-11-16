@@ -39,7 +39,7 @@ class Entity(ABC):
     def __init__(self,name:str,x_pos:int,y_pos:int):
         try:
             entity_info = default_entity_configurations['entities'][name]
-            self.max_defense = 250
+            self.max_defense = 50
             self.current_defense = 0
             self.is_alive = True
             self.current_life = entity_info['max_hp']
@@ -151,6 +151,7 @@ class Ulisses(Entity):
         self.coins = 0
         self.health_regain = 8
         self.speed = 50
+        self.deck.shuffle_and_allocate()
 
     def attack_animate(self):
         self.x_pos += 100

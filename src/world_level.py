@@ -1,7 +1,7 @@
 from pathlib import Path
 import pygame
 from entities import Enemy,Ulisses
-
+import time
 class CombatLevel:
     """
     Classe para gerenciar um nível de combate em um jogo.
@@ -38,13 +38,16 @@ class CombatLevel:
         except FileNotFoundError as error:
             print(f"{error}: background assest not found in 'assets")
 
-    def draw_level(self):
+    def draw_level(self,ulisses:Ulisses):
         """Método responsável por desenhar todo cenario e inimigos do estágio
         """
         self.screen.blit(self.background_img,(0,0))
         pygame.draw.rect(self.screen,color='brown',rect=pygame.Rect(0, 540,800,160))
         self.instantiate_enemies()
         self.draw_enemies()
+        ulisses.draw_entity(self.screen)
+        if self.is_player_turn:
+            ulisses.deck.draw_hand_on_screen(self.screen)
 
     def draw_enemies(self):
         """Método responsável por desenhar inimigos na tela do jogador 
@@ -62,23 +65,6 @@ class CombatLevel:
             for enemy_index,staged_enemy in enumerate(self.staged_enemies):
                 self.instantiated_enemies.append(Enemy(name=staged_enemy))
                 self.instantiated_enemies[enemy_index].x_pos -= 150*enemy_index
-                
-    def next_game_state(self,ulisses:Ulisses):
-        """Método responsável por limpar inimigos instanciados e prepar novos inimgos 
-        caso exista outro estágio
-        """
-        try:
-            self.game_state += 1
-            self.staged_enemies = self.stages[self.game_state]
-            self.instantiated_enemies = []
-            final_health = ulisses.current_life + ulisses.health_regain
-            ulisses.defense = 0 
-            if final_health > ulisses.max_hp:
-                ulisses.current_life = ulisses.max_hp
-            else:
-                ulisses.current_life = final_health
-        except IndexError as error:
-            print(f'{error}: attempted to pass to next stage when no following stage existed')
 
     def execute_enemy_combat_loop(self,target:Ulisses):
         """Metodo responsavel pelo ataque automatico de inimigos no jogo
@@ -122,12 +108,25 @@ class CombatLevel:
     def end_player_turn(self,ulisses:Ulisses):
         self.is_player_turn = False
         ulisses.current_energy = ulisses.max_energy
+        for each_enemy in self.instantiated_enemies:
+            each_enemy.current_defense = 0
         ulisses.deck.shuffle_and_allocate()
+        self.execute_enemy_combat_loop(ulisses)
+        self.end_enemies_turn(ulisses)
 
-    def end_enemies_turn(self):
+    def end_enemies_turn(self,ulisses:Ulisses):
         self.is_player_turn = True  
+        ulisses.current_defense = 0 
         for each_enemy in self.instantiated_enemies:
             each_enemy.current_energy = each_enemy.max_energy
-
-
-                    
+        
+    def handle_event(self,event:pygame.event.Event,ulisses:Ulisses):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            current_mouse_pos = pygame.mouse.get_pos()
+            if self.is_player_turn:
+                self.player_combat_loop(ulisses,current_mouse_pos)
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_e:
+                self.end_player_turn(ulisses)
+            elif event.key == pygame.K_a:
+                ulisses.attack_animate()
