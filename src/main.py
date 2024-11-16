@@ -12,7 +12,7 @@ running = True
 
 ulisses = entities.Ulisses()
 
-cl = CombatLevel(screen=screen,background_name='test_bg',stages=(['Ogre','King']))
+cl = CombatLevel(screen=screen,background_name='test_bg',staged_enemies=['Ogre','King'])
 
 index = True
 while running:

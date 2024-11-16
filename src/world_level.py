@@ -16,7 +16,7 @@ class CombatLevel:
         staged_enemies (list): Lista de nomes de inimigos para o estágio atual
         instantiated_enemies (list): Lista de instâncias de inimigos criados para o estágio atual
     """
-    def __init__(self,screen:pygame.display,background_name:str,stages:tuple):
+    def __init__(self,screen:pygame.display,background_name:str,staged_enemies:list):
         """Método inicializa objetos da classe CombatLevel
 
         Parâmetros:
@@ -31,8 +31,7 @@ class CombatLevel:
             
             self.game_state = 0
             self.screen = screen
-            self.stages = stages
-            self.staged_enemies = stages[self.game_state]
+            self.staged_enemies = staged_enemies
             self.instantiated_enemies = []
             self.is_player_turn = True
         except FileNotFoundError as error:
