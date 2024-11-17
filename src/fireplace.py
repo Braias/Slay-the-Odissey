@@ -22,7 +22,8 @@ class FireplaceScreen(Screen):
         ]
 
     def handle_event(self, event: pygame.event.Event):
-        pass
+        if event.type == pygame.KEYDOWN and event.dict["key"] == 32:
+            self.timeout = 1000
 
     def update(self):
         self.timeout += 1

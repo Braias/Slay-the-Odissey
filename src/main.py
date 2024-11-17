@@ -62,6 +62,7 @@ while running:
         # Troca `current_screen` na metade da transição, quando a tela estiver
         # toda preta, para o jogador não perceber
         if transition_progress > math.pi / 2 and transition_to != None:
+            pygame.event.clear() # Ignora eventos acionados durante a transição
             current_screen = transition_to
             current_screen.onenter()
             transition_to = None
@@ -80,7 +81,7 @@ while running:
                 or event.type == pygame.MOUSEMOTION:
 
                 downscaled_pos = pygame.Vector2(event.dict["pos"])
-                event.dict["pos"] = downscaled_pos / SCALE
+                event.dict["pos"] = downscaled_pos // SCALE
 
             elif event.type == pygame.QUIT:
                 running = False

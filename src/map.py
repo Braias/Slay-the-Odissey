@@ -25,7 +25,7 @@ class MapScreen(Screen):
         self.current_node = None
         self.choosen_node = None
 
-        self.scrolling = False
+        self.dragging = False
         self.scroll_initial_y = 0
         self.scroll_interval = (self.pos.y * 2 - MARGIN, MARGIN)
 
@@ -41,8 +41,6 @@ class MapScreen(Screen):
         self.current_node = root
         root.activate()
 
-        self._scroll_to(root)
-        
         for node in self.nodes:
             self._bake_trail(node)
 
@@ -77,17 +75,17 @@ class MapScreen(Screen):
         for node in self.nodes:
             self._render_node(node)
 
-    # Torna o nó atual visível na região inferior da tela, alterando a posição
-    # Y em que o mapa é desenhado
-    def _scroll_to(self, node: MapNode):
+    def onenter(self):
+        # Torna o nó atual visível na região inferior da tela, alterando a posição
+        # Y em que o mapa é desenhado
         self.pos.y = pygame.math.clamp(
-            (self.surface.get_height() * 3/4) - node.pos.y,
+            (self.surface.get_height() * 3/4) - self.current_node.pos.y,
             self.scroll_interval[0],
             self.scroll_interval[1],
         )
 
     def _mouse_motion(self, mouse_pos: Point):
-        if self.scrolling:
+        if self.dragging:
             self.pos.y = pygame.math.clamp(
                 mouse_pos[1] - self.scroll_initial_y,
                 self.scroll_interval[0],
@@ -117,12 +115,12 @@ class MapScreen(Screen):
             self.choosen_node = self.hovered_node
             self.hovered_node = None
         else:
-            self.scrolling = True
+            self.dragging = True
             self.scroll_initial_y = mouse_pos[1] - self.pos.y
 
     def _mouse_up(self, mouse_pos: Point, button: int):
         if button == 1:
-            self.scrolling = False
+            self.dragging = False
 
     def _load_sprites(self):
         self.map_sprite = pygame.image.load("assests/map_bg.png").convert_alpha()
@@ -133,14 +131,17 @@ class MapScreen(Screen):
             ss.subsurface((144, 48,  48, 48)), # nó de história distante
             ss.subsurface((144, 96, 48, 48)), # nó de batalha distante
             ss.subsurface((128, 144, 64, 64)), # nó de boss distante
+
             ss.subsurface((96,  0,  48, 48)), # nó ... já visitado
             ss.subsurface((96,  48, 48, 48)),
             ss.subsurface((96,  96, 48, 48)),
             ss.subsurface((0,   144, 64, 64)),
+
             ss.subsurface((0,   0,  48, 48)), # nó ... acessível
             ss.subsurface((0,   48, 48, 48)),
             ss.subsurface((0,   96, 48, 48)),
             ss.subsurface((0,   144, 64, 64)),
+
             ss.subsurface((48,  0,  48, 48)), # nó ... sendo selecionado
             ss.subsurface((48,  48, 48, 48)),
             ss.subsurface((48,  96, 48, 48)),
@@ -150,7 +151,8 @@ class MapScreen(Screen):
         self.trail_marks_sprite = pygame.image.load("assests/map_trail_marks.png").convert_alpha()
 
     # Desenha as arestas entre um nó e todos os seus "filhos". O desenho é feito
-    # diretamente na textura do mapa ao invés de na tela, o que permite com que
+    # diretamente na textura do mapa ao invés de na tela, o que evita que as
+    # arestas precisem ser renderizadas novamente em cada frame
     def _bake_trail(self, origin: MapNode):
         for child in origin.children:
             diff_raw = child.pos - origin.pos
