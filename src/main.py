@@ -22,6 +22,7 @@ while running:
             running = False
         else:
             cl.handle_event(event,ulisses)
+    cl.update(ulisses)
     cl.draw_level(ulisses)
     pygame.display.flip()
     clock.tick(60)

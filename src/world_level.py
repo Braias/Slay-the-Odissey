@@ -1,6 +1,6 @@
 from pathlib import Path
 import pygame
-from entities import Enemy,Ulisses
+from entities import Enemy,Ulisses,AttackState
 import time
 class CombatLevel:
     """
@@ -52,8 +52,7 @@ class CombatLevel:
         """Método responsável por desenhar inimigos na tela do jogador 
         """
         for instantiated_enemy in self.instantiated_enemies:
-            if instantiated_enemy.is_alive:
-                instantiated_enemy.draw_entity(screen=self.screen)
+            instantiated_enemy.draw_entity(screen=self.screen)
 
     def instantiate_enemies(self):
         """Método responsável por instanciar todos inimigos do estágio caso não existam
@@ -64,6 +63,7 @@ class CombatLevel:
             for enemy_index,staged_enemy in enumerate(self.staged_enemies):
                 self.instantiated_enemies.append(Enemy(name=staged_enemy))
                 self.instantiated_enemies[enemy_index].x_pos -= 150*enemy_index
+                self.instantiated_enemies[enemy_index].origin_x -= 150*enemy_index
 
     def execute_enemy_combat_loop(self,target:Ulisses):
         """Metodo responsavel pelo ataque automatico de inimigos no jogo
@@ -129,3 +129,10 @@ class CombatLevel:
                 self.end_player_turn(ulisses)
             elif event.key == pygame.K_a:
                 ulisses.attack_animate()
+
+    def update(self,ulisses:Ulisses):
+        if ulisses.attack_state != AttackState.REST:
+            ulisses.attack_animate(invert_direction=False)
+        for each_entity in self.instantiated_enemies:
+            if each_entity.attack_state != AttackState.REST:
+                each_entity.attack_animate(invert_direction=True)

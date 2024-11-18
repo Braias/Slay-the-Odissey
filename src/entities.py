@@ -4,6 +4,7 @@ from deck import Deck
 import json
 from abc import ABC, abstractmethod
 import copy
+from enum import Enum
 
 game_dir = Path(__file__).parent.parent
 entities_json_path = game_dir / "assets" / "entities.json"
@@ -57,6 +58,10 @@ class Entity(ABC):
             self.y_pos = y_pos
             self.rect = self.sprite.get_rect()
             self.deck.set_owner(self) # definimos o dono do deck como a porpria entidade
+
+            self.origin_x = x_pos
+            self.attack_state = AttackState.REST
+            self.animation_start_time = None
         except FileNotFoundError as error:
             print(f"{error}: assest of name {self.name} was not found in folder 'assets'")
     def __str__(self):
@@ -82,20 +87,21 @@ class Entity(ABC):
         pygame.draw.rect(screen, primary_color, pygame.Rect(x, y, dyanamic_bar_size, height))
 
     def draw_status_bar(self, screen: pygame.display):
-        # Coordenadas Base e dimensoes para retangulos - deslocados para canto esquero do personagem
-        x, y = self.x_pos - 75, self.y_pos - 75
-        background_width = 100
+        if self.is_alive:
+            # Coordenadas Base e dimensoes para retangulos - deslocados para canto esquero do personagem
+            x, y = self.x_pos - 75, self.y_pos - 75
+            background_width = 100
 
-        # Rendereizando fonte e calculando tamanho de cada barra
-        hp_text_img = pygame.font.SysFont('Arial', 18).render(f'{self.current_life}/{self.max_hp}', True, 'white')
-        health_bar_size = background_width * (self.current_life / self.max_hp)
-        defense_bar_size = background_width * (self.current_defense / self.max_defense)
+            # Rendereizando fonte e calculando tamanho de cada barra
+            hp_text_img = pygame.font.SysFont('Arial', 18).render(f'{self.current_life}/{self.max_hp}', True, 'white')
+            health_bar_size = background_width * (self.current_life / self.max_hp)
+            defense_bar_size = background_width * (self.current_defense / self.max_defense)
 
-        self.__draw_status_rectangle(screen, background_width, 20, health_bar_size,  x + 25, y - 23, 'red', 'grey')
-        self.__draw_status_rectangle(screen, background_width,  5, defense_bar_size, x + 25, y, 'blue', 'gray')
+            self.__draw_status_rectangle(screen, background_width, 20, health_bar_size,  x + 25, y - 23, 'red', 'grey')
+            self.__draw_status_rectangle(screen, background_width,  5, defense_bar_size, x + 25, y, 'blue', 'gray')
 
-        # Desenhar texto indicador de vida atual
-        screen.blit(hp_text_img, (x + 25, y - 23))
+            # Desenhar texto indicador de vida atual
+            screen.blit(hp_text_img, (x + 25, y - 23))
 
     def hit_animate(self):
         #hit_duration = 
@@ -107,8 +113,30 @@ class Entity(ABC):
             img_path = game_dir / "assets" / "death" / f"RIP.png"
             img = pygame.image.load(img_path)
             self.sprite = pygame.transform.scale(img,(150,150)) 
-    @abstractmethod
-    def attack_animate(self):...
+
+    def engage_attack(self):
+        self.attack_state = AttackState.ATTACK
+        self.animation_start_time = pygame.time.get_ticks()
+
+    def attack_animate(self,invert_direction:bool):
+        duration_ms = 200
+        x_displacement = 20
+        direction = (-1) ** (int(invert_direction))
+
+        current_time = pygame.time.get_ticks()
+        elapsed_time = current_time - self.animation_start_time
+        if self.attack_state == AttackState.ATTACK:
+            if elapsed_time < duration_ms//2:
+                self.x_pos += x_displacement*direction
+            else: 
+                self.attack_state = AttackState.RETREAT
+
+        elif self.attack_state == AttackState.RETREAT:
+            if elapsed_time < duration_ms:
+                self.x_pos -= x_displacement*direction
+            else:
+                self.attack_state = AttackState.REST
+                self.x_pos = self.origin_x
     
 
 class Enemy(Entity):
@@ -126,9 +154,6 @@ class Enemy(Entity):
                          x_pos=700,
                          y_pos=375)
         self.drop_xp = entity_info['drop_xp']
-
-    def attack_animate(self):
-        pass
 class Ulisses(Entity):
     """
     Classe que representa o personagem principal - herdando da classe 'Entity'.
@@ -150,33 +175,8 @@ class Ulisses(Entity):
         self.xp = 0
         self.coins = 0
         self.health_regain = 8
-        self.speed = 50
         self.deck.shuffle_and_allocate()
-
-    def attack_animate(self):
-        self.x_pos += 100
-        attacking = True
-        backing = False
-        attack_distance = 100
-        original_x = copy.deepcopy(self.x_pos)
-        while attacking:
-            print("atacando")
-            self.x_pos += self.speed
-            if self.x_pos - original_x >= attack_distance:
-                print("parei de atacar")
-                attacking = False
-                backing = True
-        while backing:
-            print("voltando")
-            self.x_pos -= self.speed
-            if self.x_pos - original_x <= 0:
-                print("parei de voltar")
-                backing = False
         
-
-
-
-
     def draw_status_bar(self,screen:pygame.display):
         super().draw_status_bar(screen)
         energy_text_img = pygame.font.SysFont('Arial', 34).render(f'{self.current_energy}', True, 'white')
@@ -185,3 +185,9 @@ class Ulisses(Entity):
 
     def insufficient_energy_animate(self):
         pass
+
+class AttackState(Enum):
+    REST = 0 
+    ATTACK = 1
+    RETREAT = 2
+
