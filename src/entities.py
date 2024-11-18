@@ -60,7 +60,7 @@ class Entity(ABC):
             self.deck.set_owner(self) # definimos o dono do deck como a porpria entidade
 
             self.origin_x = x_pos
-            self.attack_state = AttackState.REST
+            self.animation_state = AnimationState.REST
             self.animation_start_time = None
         except FileNotFoundError as error:
             print(f"{error}: assest of name {self.name} was not found in folder 'assets'")
@@ -103,42 +103,54 @@ class Entity(ABC):
             # Desenhar texto indicador de vida atual
             screen.blit(hp_text_img, (x + 25, y - 23))
 
-    def hit_animate(self):
-        #hit_duration = 
-        pass
-    def defense_animate(self):
-        pass
-
     def death_animate(self):
-            img_path = game_dir / "assets" / "death" / f"RIP.png"
-            img = pygame.image.load(img_path)
-            self.sprite = pygame.transform.scale(img,(150,150)) 
+        img_path = game_dir / "assets" / "death" / f"RIP.png"
+        img = pygame.image.load(img_path)
+        self.sprite = pygame.transform.scale(img,(150,150)) 
+
+    def engage_hit(self):
+        self.animation_state = AnimationState.SHAKE
+        self.animation_start_time = pygame.time.get_ticks()
 
     def engage_attack(self):
-        self.attack_state = AttackState.ATTACK
+        self.animation_state = AnimationState.ATTACK
         self.animation_start_time = pygame.time.get_ticks()
 
     def attack_animate(self,invert_direction:bool):
-        duration_ms = 200
-        x_displacement = 20
+        duration_ms = 300
+        x_displacement = 15
         direction = (-1) ** (int(invert_direction))
 
         current_time = pygame.time.get_ticks()
         elapsed_time = current_time - self.animation_start_time
-        if self.attack_state == AttackState.ATTACK:
+        if self.animation_state == AnimationState.ATTACK:
             if elapsed_time < duration_ms//2:
                 self.x_pos += x_displacement*direction
             else: 
-                self.attack_state = AttackState.RETREAT
+                self.animation_state = AnimationState.RETREAT
 
-        elif self.attack_state == AttackState.RETREAT:
+        elif self.animation_state == AnimationState.RETREAT:
             if elapsed_time < duration_ms:
                 self.x_pos -= x_displacement*direction
             else:
-                self.attack_state = AttackState.REST
+                self.animation_state = AnimationState.REST
                 self.x_pos = self.origin_x
-    
 
+    def hit_animate(self):
+        if self.animation_state == AnimationState.SHAKE:
+            duration_ms = 150
+            x_displacement = 8
+
+            current_time = pygame.time.get_ticks()
+            elapsed_time = current_time - self.animation_start_time
+            if elapsed_time < duration_ms:
+                if self.x_pos <= self.origin_x:
+                    self.x_pos = self.origin_x + x_displacement
+                elif self.x_pos > self.origin_x:
+                    self.x_pos = self.origin_x - x_displacement
+            else:
+                self.x_pos = self.origin_x
+                self.animation_state = AnimationState.REST
 class Enemy(Entity):
     """
     Classe que representa um inimigo no jogo - herda classe 'Entity'
@@ -186,8 +198,9 @@ class Ulisses(Entity):
     def insufficient_energy_animate(self):
         pass
 
-class AttackState(Enum):
+class AnimationState(Enum):
     REST = 0 
     ATTACK = 1
     RETREAT = 2
+    SHAKE = 3
 

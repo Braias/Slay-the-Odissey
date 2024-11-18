@@ -105,14 +105,12 @@ class AttackCard(Card):
                 target.current_defense = 0 
             else:
                 target.current_defense -= self._damage
-                print(target.current_defense)
             super().apply_card(owner,target)
             owner.deck.discard_card(self)
             owner.deck.selected_card = None
             owner.engage_attack()
-            #target.hit_animate()
+            target.engage_hit()
             if not target.is_alive:
-                print('dead')
                 target.death_animate()
 
 class DefenseCard(Card):
@@ -147,5 +145,4 @@ class DefenseCard(Card):
             super().apply_card(owner,target)
             owner.deck.discard_card(self)
             owner.deck.selected_card = None
-            owner.defense_animate()
         
