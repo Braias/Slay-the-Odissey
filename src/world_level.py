@@ -1,6 +1,6 @@
 from pathlib import Path
 import pygame
-from entities import Enemy,Ulisses,AttackState
+from entities import Enemy,Ulisses,AnimationState
 import time
 class CombatLevel:
     """
@@ -64,30 +64,30 @@ class CombatLevel:
                 self.instantiated_enemies.append(Enemy(name=staged_enemy))
                 self.instantiated_enemies[enemy_index].x_pos -= 150*enemy_index
                 self.instantiated_enemies[enemy_index].origin_x -= 150*enemy_index
-
-    def execute_enemy_combat_loop(self,target:Ulisses):
-        """Metodo responsavel pelo ataque automatico de inimigos no jogo
-
-        Args:
-            target (Ulisses): alvo prinicpal de todo inimigo smepre sera o protagonista
-        """
+    
+    def execute_enemy_combat_loop(self,ulisses:Ulisses):
         for each_enemy in self.instantiated_enemies:
-            # No inicio de cada rodada usamos o shuffle and allcoate 
-            # Isso limpa a mao antiga do inimigo e aleatoriamente aloca um anova
-            each_enemy.deck.shuffle_and_allocate() 
-            # Enquanto o Inimigo tiver energia e Nao tiver exausto seu deck inteiro lutamos
-            while each_enemy.current_energy > 0 and len(each_enemy.deck.hand) > 0 and each_enemy.is_alive:
-                # Selecionamos smepre a primeira carta do baralho
-                each_enemy.deck.selected_card = each_enemy.deck.hand[0]
-                if each_enemy.deck.selected_card._type == 'attack':
-                    each_enemy.deck.selected_card.apply_card(each_enemy,target)
-                elif each_enemy.deck.selected_card._type == 'defense':
-                    each_enemy.deck.selected_card.apply_card(each_enemy,each_enemy)
-                # Caso o inimgo nao tenha energia para jogar a carta atual ainda queremos 
-                # olhar proximas cartas, assim descartamos a carta atual e prosseguimos
-                if each_enemy.deck.selected_card in each_enemy.deck.hand:
-                    each_enemy.deck.discard_card(each_enemy.deck.selected_card)
+            has_played = self.execute_enemy_turn(each_enemy,ulisses)
+            if has_played:
+                break
+            else:
+                self.end_enemies_turn(ulisses)
 
+    def execute_enemy_turn(self,enemy:Enemy,target:Ulisses) -> bool:
+        enemy_turn_played = False
+        if enemy.is_alive and enemy.current_energy > 0 and len(enemy.deck.hand) > 0:
+            #Selecionamos smepre a primeira carta do baralho
+            enemy.deck.selected_card = enemy.deck.hand[0]
+            if enemy.deck.selected_card._type == 'attack':
+                enemy.deck.selected_card.apply_card(enemy,target)
+            elif enemy.deck.selected_card._type == 'defense':
+                enemy.deck.selected_card.apply_card(enemy,enemy)
+            # Caso o inimgo nao tenha energia para jogar a carta atual ainda queremos 
+            # olhar proximas cartas, assim descartamos a carta atual e prosseguimos
+            if enemy.deck.selected_card in enemy.deck.hand:
+                enemy.deck.discard_card(enemy.deck.selected_card)
+            enemy_turn_played = True
+        return enemy_turn_played
 
     def player_combat_loop(self,ulisses:Ulisses,mouse_pos:tuple):
         if ulisses.is_alive:
@@ -110,15 +110,21 @@ class CombatLevel:
         for each_enemy in self.instantiated_enemies:
             each_enemy.current_defense = 0
         ulisses.deck.shuffle_and_allocate()
-        self.execute_enemy_combat_loop(ulisses)
-        self.end_enemies_turn(ulisses)
+        for each_enemy in self.instantiated_enemies:
+            each_enemy.deck.shuffle_and_allocate()
 
     def end_enemies_turn(self,ulisses:Ulisses):
         self.is_player_turn = True  
         ulisses.current_defense = 0 
         for each_enemy in self.instantiated_enemies:
             each_enemy.current_energy = each_enemy.max_energy
-        
+
+    def check_enemy_animating(self) -> bool:
+        for each_enemy in self.instantiated_enemies:
+            if each_enemy.animation_state != AnimationState.REST:
+                return True
+        return False
+    
     def handle_event(self,event:pygame.event.Event,ulisses:Ulisses):
         if event.type == pygame.MOUSEBUTTONDOWN:
             current_mouse_pos = pygame.mouse.get_pos()
@@ -129,10 +135,18 @@ class CombatLevel:
                 self.end_player_turn(ulisses)
             elif event.key == pygame.K_a:
                 ulisses.attack_animate()
-
-    def update(self,ulisses:Ulisses):
-        if ulisses.attack_state != AttackState.REST:
+    def run_animations(self,ulisses:Ulisses):
+        if ulisses.animation_state == AnimationState.ATTACK or ulisses.animation_state == AnimationState.RETREAT:
             ulisses.attack_animate(invert_direction=False)
-        for each_entity in self.instantiated_enemies:
-            if each_entity.attack_state != AttackState.REST:
-                each_entity.attack_animate(invert_direction=True)
+        elif ulisses.animation_state == AnimationState.SHAKE:
+            ulisses.hit_animate()
+        for each_enemy in self.instantiated_enemies:
+            if each_enemy.animation_state == AnimationState.ATTACK or each_enemy.animation_state == AnimationState.RETREAT:
+                each_enemy.attack_animate(invert_direction=True)
+            elif each_enemy.animation_state == AnimationState.SHAKE:
+                each_enemy.hit_animate()
+    def update(self,ulisses:Ulisses):
+        if not self.is_player_turn and not self.check_enemy_animating():
+            self.execute_enemy_combat_loop(ulisses)
+        self.run_animations(ulisses)
+
