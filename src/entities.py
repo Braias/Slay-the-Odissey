@@ -48,6 +48,8 @@ class Entity(ABC):
             self.deck = Deck(draw_pile_ids=entity_info['draw_pile']) 
             self.name = name
 
+
+
             img_path = game_dir / "assets" / f"{self.name}.png"
             img = pygame.image.load(img_path)
             self.sprite = pygame.transform.scale(img,(150,150)) # fixa as dimensões de todas as entidades em quadrados de 150x150
@@ -190,4 +192,15 @@ class AttackState(Enum):
     REST = 0 
     ATTACK = 1
     RETREAT = 2
+
+class BuffsAndDebuffs(Enum):
+    DMG_MULTIPLIER = 0
+    DMG_FLAT_BONUS = 1
+    SHIELD_MULTIPLIER = 2
+    SHIELD_FLAT_BONUS = 3
+    POISON = 4
+    THORNS = 5
+    HEAL = 6
+    RESISTANCE_MULTIPLIER = 7
+    RESISTANCE_FLAT_BONUS = 8
 
