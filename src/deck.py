@@ -92,13 +92,15 @@ class Deck:
             card_info = default_card_configurations['cards'][card_id]
             card_type = card_info['type']
             if card_type == 'attack':
-                draw_pile.append(cards.AttackCard(card_id,card_info['description'],
+                draw_pile.append(cards.AttackCard(card_id,
                                                   card_info['cost'],card_info['damage'],
                                                   card_type))
             elif card_type == 'defense':
-                draw_pile.append(cards.DefenseCard(card_id,card_info['description'],
+                draw_pile.append(cards.DefenseCard(card_id,
                                                    card_info['cost'],card_info['defense'],
                                                    card_type))
+            elif card_type == "effect":
+                pass
         return draw_pile
     
     def draw_hand_on_screen(self,screen:pygame.display):

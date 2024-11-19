@@ -2,7 +2,6 @@
     "cards": {
         "Facada":{
             "name":"Facada",
-            "description":"Esfaqueia o inimigo",
             "cost":1,
             "damage":30,
             "type":"attack",
@@ -10,7 +9,6 @@
         },
         "Tapa":{
             "name":"Tapa",
-            "description":"Estapeia o inimigo, ",
             "cost": 0,
             "damage": 10,
             "type":"attack",
@@ -18,7 +16,6 @@
         },
         "Cabecada":{
             "name": "Cabecada",
-            "description": "Bate sua cabeça no inimigo",
             "cost": 1,
             "damage": 9,
             "type": "attack",
@@ -26,18 +23,16 @@
         },
         "Escudo":{
             "name":"Escudo",
-            "description":"Equipa um escudo",
             "cost":1,
             "defense":25,
             "type":"defense",
             "effect":"None"
         },
-        "Ácido":{
-            "name":"Veneno",
-            "description":"Joga veneno no inimigo",
+        "Acido":{
+            "name":"Acido",
             "cost":1,
             "damage":0,
-            "type":"attack",
+            "type":"effect",
             "effect":"None"
         }
         

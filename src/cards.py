@@ -18,17 +18,14 @@ class Card(ABC):
     ----------
     name : str
         Título específico da carta.
-    description : str
-        Descrição da carta, seus efeitos e funcionalidades.
     cost : int
         Custo energético da carta perante ao seu uso.
     type : str
         Tipo da Carta dentre os definidos: "Attack", "Defense", etc.
     """
     
-    def __init__(self, name: str, description: str, cost: int, type: str):
+    def __init__(self, name: str, cost: int, type: str):
         self._name = name
-        self._description = description 
         self._cost = cost 
         self._type = type 
         
@@ -61,8 +58,6 @@ class AttackCard(Card):
     ----------
     name : str
         Título específico da carta.
-    description : str
-        Descrição da carta, seus efeitos e funcionalidades.
     cost : int
         Custo energético da carta perante ao seu uso.
     damage : int
@@ -70,8 +65,8 @@ class AttackCard(Card):
     type : str, optional
         Tipo da Carta dentre os definidos: "Attack", "Defense", etc, por default "attack"
     """
-    def __init__(self, name, description, cost, damage: int, type="attack"):
-        super().__init__(name, description, cost, type)
+    def __init__(self, name, cost, damage: int, type="attack"):
+        super().__init__(name, cost, type)
         self._damage = damage
 
     def check_target(self, owner, target) -> bool:
@@ -116,8 +111,8 @@ class AttackCard(Card):
                 target.death_animate()
 
 class DefenseCard(Card):
-    def __init__(self, name, description, cost, defense: int, type="defense"):
-        super().__init__(name, description, cost, type)
+    def __init__(self, name, cost, defense: int, type="defense"):
+        super().__init__(name, cost, type)
         self._defense = defense
      
     def check_target(self, target, owner) -> bool:
