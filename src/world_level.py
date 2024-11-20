@@ -109,6 +109,8 @@ class CombatLevel:
         ulisses.current_energy = ulisses.max_energy
         for each_enemy in self.instantiated_enemies:
             each_enemy.current_defense = 0
+            each_enemy.poison_decay()
+            each_enemy.regen_decay()
         ulisses.deck.shuffle_and_allocate()
         for each_enemy in self.instantiated_enemies:
             each_enemy.deck.shuffle_and_allocate()
@@ -116,6 +118,8 @@ class CombatLevel:
     def end_enemies_turn(self,ulisses:Ulisses):
         self.is_player_turn = True  
         ulisses.current_defense = 0 
+        ulisses.poison_decay()
+        ulisses.regen_decay()
         for each_enemy in self.instantiated_enemies:
             each_enemy.current_energy = each_enemy.max_energy
 
@@ -146,6 +150,11 @@ class CombatLevel:
             elif each_enemy.animation_state == AnimationState.SHAKE:
                 each_enemy.hit_animate()
     def update(self,ulisses:Ulisses):
+        for enemy in self.instantiated_enemies:
+            if enemy.current_life <= 0:
+                enemy.is_alive = False
+                enemy.death_animate()
+
         if not self.is_player_turn and not self.check_enemy_animating():
             self.execute_enemy_combat_loop(ulisses)
         self.run_animations(ulisses)

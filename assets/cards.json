@@ -4,36 +4,31 @@
             "name":"Facada",
             "cost":1,
             "damage":30,
-            "type":"attack",
-            "effect":"None"
+            "type":"attack"
         },
         "Tapa":{
             "name":"Tapa",
             "cost": 0,
             "damage": 10,
-            "type":"attack",
-            "effect":"None"
+            "type":"attack"
         },
         "Cabecada":{
             "name": "Cabecada",
             "cost": 1,
             "damage": 9,
-            "type": "attack",
-            "effect":"None"
+            "type": "attack"
         },
         "Escudo":{
             "name":"Escudo",
             "cost":1,
             "defense":25,
-            "type":"defense",
-            "effect":"None"
+            "type":"defense"
         },
         "Acido":{
             "name":"Acido",
             "cost":1,
-            "damage":0,
-            "type":"effect",
-            "effect":"None"
+            "poison": 5,
+            "type":"effect"
         }
         
     }

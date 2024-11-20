@@ -141,3 +141,20 @@ class DefenseCard(Card):
             owner.deck.discard_card(self)
             owner.deck.selected_card = None
         
+class EffectCard(Card):
+    def __init__(self, name, cost, poison: int, type = "effect"):
+        super().__init__(name, cost, type)
+        self.poison = poison
+
+    def check_target(owner, target):
+        return super().check_target(target)
+    
+    def apply_card(self, owner, target) -> bool:
+        if self._name == "Acido" and target != owner:
+            target.poison += int(self.poison)
+            owner.deck.discard_card(self)
+            owner.deck.selected_card = None
+        if self._name == "Regen" and target == owner:
+            return True
+        else:
+            return False

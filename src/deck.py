@@ -100,7 +100,7 @@ class Deck:
                                                    card_info['cost'],card_info['defense'],
                                                    card_type))
             elif card_type == "effect":
-                pass
+                draw_pile.append(cards.EffectCard(card_id, card_info['cost'],card_info['poison'], card_type))
         return draw_pile
     
     def draw_hand_on_screen(self,screen:pygame.display):

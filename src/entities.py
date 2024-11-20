@@ -48,7 +48,8 @@ class Entity(ABC):
             self.deck = Deck(draw_pile_ids=entity_info['draw_pile']) 
             self.name = name
 
-
+            self.poison = 0
+            self.regen = 0
 
             img_path = game_dir / "assets" / f"{self.name}.png"
             img = pygame.image.load(img_path)
@@ -153,6 +154,17 @@ class Entity(ABC):
             else:
                 self.x_pos = self.origin_x
                 self.animation_state = AnimationState.REST
+
+    def poison_decay(self):
+        if self.poison > 0:
+            self.current_life -= self.poison
+            self.poison -= 1
+
+    def regen_decay(self):
+        if self.regen >0:
+            self.current_life += self.regen
+            self.regen -= 1
+
 class Enemy(Entity):
     """
     Classe que representa um inimigo no jogo - herda classe 'Entity'
@@ -207,13 +219,5 @@ class AnimationState(Enum):
     SHAKE = 3
 
 class BuffsAndDebuffs(Enum):
-    DMG_MULTIPLIER = 0
-    DMG_FLAT_BONUS = 1
-    SHIELD_MULTIPLIER = 2
-    SHIELD_FLAT_BONUS = 3
-    POISON = 4
-    THORNS = 5
-    HEAL = 6
-    RESISTANCE_MULTIPLIER = 7
-    RESISTANCE_FLAT_BONUS = 8
-
+    POISON = 0
+    REGEN = 1
