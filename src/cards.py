@@ -94,7 +94,8 @@ class AttackCard(Card):
         if self.validate_application(owner,target):
             if target.current_defense < self._damage:
                 # Subtrai a diferença entre o dano e a defesa da vida atual do alvo
-                new_target_hp = target.current_life - (self._damage - target.current_defense)
+                damage = int((self._damage*owner.damage_multiplier)/target.absorption_multiplier)
+                new_target_hp = target.current_life - (damage - target.current_defense)
                 if new_target_hp <= 0:
                     target.current_life = 0 
                 else:
@@ -135,8 +136,6 @@ class DefenseCard(Card):
 
         
 class EffectCard(Card,ABC):
-    # Why Would init have poison if not all cards are poison - Need to generalize
-    # This only owrks because poison is the only effect card
     def __init__(self, name:str, cost:int, type:str, status_effect_id:int, **kwargs):
         super().__init__(name, cost, type)
         self.status_effect_info = kwargs
@@ -151,18 +150,18 @@ class EffectCard(Card,ABC):
     def instantiate_status_effect(self,status_effect_id:int,**kwargs) -> se.StatusEffect:
         chosen_effect_type = se.EffectTypes(status_effect_id)
         try:
+            duration = kwargs['duration']
             if chosen_effect_type == se.EffectTypes.POISON:
-                duration = kwargs['duration']
                 damage = kwargs['damage']
                 return se.Poison(duration,damage)
             elif chosen_effect_type == se.EffectTypes.ABSORPTION:
                 pass
             elif chosen_effect_type == se.EffectTypes.REGEN:
-                duration = kwargs['duration']
                 heal = kwargs['heal']
                 return se.Regen(duration,heal)
             elif chosen_effect_type == se.EffectTypes.STRENGTH:
-                pass
+                dmg_buff = kwargs['damage_percent_buff']
+                return se.Strength(duration,dmg_buff)    
         except KeyError as error:
             print(f'{error}:inadequate parameters passed for {chosen_effect_type} card - {kwargs}')
 

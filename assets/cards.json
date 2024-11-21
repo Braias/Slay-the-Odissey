@@ -1,42 +1,49 @@
 {
     "cards": {
-        "Facada":{
-            "name":"Facada",
+        "Facada_lvl_1":{
+            "name":"Facada_lvl_1",
             "cost":1,
             "damage":30,
             "type":"attack"
         },
-        "Tapa":{
-            "name":"Tapa",
+        "Tapa_lvl_1":{
+            "name":"Tapa_lvl_1",
             "cost": 0,
             "damage": 10,
             "type":"attack"
         },
-        "Cabecada":{
-            "name": "Cabecada",
+        "Cabecada_lvl_1":{
+            "name": "Cabecada_lvl_1",
             "cost": 1,
             "damage": 9,
             "type": "attack"
         },
-        "Escudo":{
-            "name":"Escudo",
+        "Escudo_lvl_1":{
+            "name":"Escudo_lvl_1",
             "cost":1,
             "defense":25,
             "type":"defense"
         },
-        "Acido":{
-            "name":"Acido",
+        "Acido_lvl_1":{
+            "name":"Acido_lvl_1",
             "cost":1,
             "type":"offensive_effect",
             "status_effect_id":0,
             "status_effect_info":{"damage":5,"duration":5}
         },
-        "Cura":{
-            "name":"Cura",
+        "Cura_lvl_1":{
+            "name":"Cura_lvl_1",
             "cost":2,
             "type":"defensive_effect",
             "status_effect_id":1,
             "status_effect_info":{"heal":5,"duration":5}
+        },
+        "Forca_lvl_1":{
+            "name":"Forca_lvl_1",
+            "cost":2,
+            "type":"defensive_effect",
+            "status_effect_id":3,
+            "status_effect_info":{"damage_percent_buff":0.3,"duration":3}
         }
     }
 }

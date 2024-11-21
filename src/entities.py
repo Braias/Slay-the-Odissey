@@ -45,6 +45,9 @@ class Entity():
             self.deck = Deck(draw_pile_ids=entity_info['draw_pile']) 
             self.name = name
 
+            self.damage_multiplier = 1
+            self.absorption_multiplier = 1
+
             self.applied_offensive_effects = [] # lista de efeitos negativos aplicados por inimigos
             self.applied_defensive_effects = [] # lista de efeitos positivos aplicados por si mesmo
 
@@ -165,8 +168,9 @@ class Entity():
             status_effect.apply_effect(affected=self)
             if status_effect.duration == 0:
                 self.applied_defensive_effects.remove(status_effect)
-    
-
+    def clear_multipliers(self):
+        self.absorption_multiplier = 1
+        self.damage_multiplier = 1
 
 class Enemy(Entity):
     """

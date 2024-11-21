@@ -112,6 +112,7 @@ class CombatLevel:
             each_enemy.apply_defensive_effects()
         ulisses.current_energy = ulisses.max_energy
         ulisses.deck.shuffle_and_allocate()
+        ulisses.clear_multipliers()
         self.is_player_turn = False
 
 

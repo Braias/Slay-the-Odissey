@@ -52,3 +52,13 @@ class Regen(StatusEffect):
             else:
                 affected.current_life = new_health
             super().apply_effect()
+
+class Strength(StatusEffect):
+    def __init__(self, duration:int,damage_percent_buff:float):
+        super().__init__(duration)
+        self.damage_percent_buff = damage_percent_buff
+
+    def apply_effect(self,affected):
+        if affected.check_is_alive():
+            affected.damage_multiplier += self.damage_percent_buff
+            super().apply_effect()

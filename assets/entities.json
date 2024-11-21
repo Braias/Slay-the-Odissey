@@ -3,25 +3,25 @@
         "Ulisses":{
             "max_hp":80,
             "max_energy":4,
-            "draw_pile": ["Cura","Facada","Escudo","Escudo","Escudo","Cura"]
+            "draw_pile": ["Forca_lvl_1","Facada_lvl_1","Escudo_lvl_1","Tapa_lvl_1","Tapa_lvl_1","Cura_lvl_1"]
         },
         "Fairy": {
             "drop_xp": 50,
             "max_hp": 100,
             "max_energy": 1,
-            "draw_pile": ["Facada","Tapa","Escudo"]
+            "draw_pile": ["Facada_lvl_1","Tapa_lvl_1","Escudo_lvl_1"]
         },
         "Ogre": {
             "drop_xp": 200,
             "max_hp": 40,
             "max_energy": 2,
-            "draw_pile": ["Facada","Tapa","Escudo"]
+            "draw_pile": ["Facada_lvl_1","Tapa_lvl_1","Escudo_lvl_1"]
         },
         "King": {
             "drop_xp": 500,
             "max_hp": 30,
             "max_energy": 3,
-            "draw_pile": ["Facada","Tapa","Escudo"]
+            "draw_pile": ["Facada_lvl_1","Tapa_lvl_1","Escudo_lvl_1"]
         }
     }
 }
