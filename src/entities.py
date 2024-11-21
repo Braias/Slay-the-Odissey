@@ -2,8 +2,6 @@ from pathlib import Path
 import pygame
 from deck import Deck
 import json
-from abc import ABC, abstractmethod
-import copy
 from enum import Enum
 
 game_dir = Path(__file__).parent.parent
@@ -12,7 +10,7 @@ entities_json_path = game_dir / "assets" / "entities.json"
 with open(file=entities_json_path,mode='r') as enemy_config:
     default_entity_configurations = json.load(enemy_config)
 
-class Entity(ABC):
+class Entity():
     """
     Classe que representa uma entidade qualquer no jogo, dentre as possibilidades estabelecidas.
 
@@ -42,14 +40,13 @@ class Entity(ABC):
             entity_info = default_entity_configurations['entities'][name]
             self.max_defense = 50
             self.current_defense = 0
-            self.is_alive = True
             self.current_life = entity_info['max_hp']
             self.max_hp = entity_info['max_hp']
             self.deck = Deck(draw_pile_ids=entity_info['draw_pile']) 
             self.name = name
 
-            self.poison = 0
-            self.regen = 0
+            self.applied_offensive_effects = [] # lista de efeitos negativos aplicados por inimigos
+            self.applied_defensive_effects = [] # lista de efeitos positivos aplicados por si mesmo
 
             img_path = game_dir / "assets" / f"{self.name}.png"
             img = pygame.image.load(img_path)
@@ -90,7 +87,7 @@ class Entity(ABC):
         pygame.draw.rect(screen, primary_color, pygame.Rect(x, y, dyanamic_bar_size, height))
 
     def draw_status_bar(self, screen: pygame.display):
-        if self.is_alive:
+        if self.check_is_alive():
             # Coordenadas Base e dimensoes para retangulos - deslocados para canto esquero do personagem
             x, y = self.x_pos - 75, self.y_pos - 75
             background_width = 100
@@ -106,6 +103,9 @@ class Entity(ABC):
             # Desenhar texto indicador de vida atual
             screen.blit(hp_text_img, (x + 25, y - 23))
 
+    def check_is_alive(self):
+        return self.current_life > 0
+    
     def death_animate(self):
         img_path = game_dir / "assets" / "death" / f"RIP.png"
         img = pygame.image.load(img_path)
@@ -120,7 +120,7 @@ class Entity(ABC):
         self.animation_start_time = pygame.time.get_ticks()
 
     def attack_animate(self,invert_direction:bool):
-        duration_ms = 300
+        duration_ms = 400
         x_displacement = 15
         direction = (-1) ** (int(invert_direction))
 
@@ -155,15 +155,18 @@ class Entity(ABC):
                 self.x_pos = self.origin_x
                 self.animation_state = AnimationState.REST
 
-    def poison_decay(self):
-        if self.poison > 0:
-            self.current_life -= self.poison
-            self.poison -= 1
+    def apply_offensive_effects(self):
+        for status_effect in self.applied_offensive_effects:
+            status_effect.apply_effect(affected=self)
+            if status_effect.duration == 0:
+                self.applied_offensive_effects.remove(status_effect)
+    def apply_defensive_effects(self):
+        for status_effect in self.applied_defensive_effects:
+            status_effect.apply_effect(affected=self)
+            if status_effect.duration == 0:
+                self.applied_defensive_effects.remove(status_effect)
+    
 
-    def regen_decay(self):
-        if self.regen >0:
-            self.current_life += self.regen
-            self.regen -= 1
 
 class Enemy(Entity):
     """
@@ -180,6 +183,7 @@ class Enemy(Entity):
                          x_pos=700,
                          y_pos=375)
         self.drop_xp = entity_info['drop_xp']
+
 class Ulisses(Entity):
     """
     Classe que representa o personagem principal - herdando da classe 'Entity'.
@@ -218,6 +222,3 @@ class AnimationState(Enum):
     RETREAT = 2
     SHAKE = 3
 
-class BuffsAndDebuffs(Enum):
-    POISON = 0
-    REGEN = 1

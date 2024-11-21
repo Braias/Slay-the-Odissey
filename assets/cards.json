@@ -27,9 +27,16 @@
         "Acido":{
             "name":"Acido",
             "cost":1,
-            "poison": 5,
-            "type":"effect"
+            "type":"offensive_effect",
+            "status_effect_id":0,
+            "status_effect_info":{"damage":5,"duration":5}
+        },
+        "Cura":{
+            "name":"Cura",
+            "cost":2,
+            "type":"defensive_effect",
+            "status_effect_id":1,
+            "status_effect_info":{"heal":5,"duration":5}
         }
-        
     }
 }

@@ -99,8 +99,18 @@ class Deck:
                 draw_pile.append(cards.DefenseCard(card_id,
                                                    card_info['cost'],card_info['defense'],
                                                    card_type))
-            elif card_type == "effect":
-                draw_pile.append(cards.EffectCard(card_id, card_info['cost'],card_info['poison'], card_type))
+            elif card_type == "offensive_effect":
+                draw_pile.append(cards.OffensiveEffectCard(card_id, 
+                                                  card_info['cost'],
+                                                  card_type,
+                                                  card_info['status_effect_id'],
+                                                  **card_info['status_effect_info']))
+            elif card_type == "defensive_effect":
+                draw_pile.append(cards.DefensiveEffectCard(card_id, 
+                                                  card_info['cost'],
+                                                  card_type,
+                                                  card_info['status_effect_id'],
+                                                  **card_info['status_effect_info']))
         return draw_pile
     
     def draw_hand_on_screen(self,screen:pygame.display):

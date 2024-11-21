@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 import pygame
+import status_effects as se
 
 class InsufficientEnergyError(Exception):
     def __init__(self, message="A energia atual não é suficiente para essa carta"):
@@ -39,8 +40,11 @@ class Card(ABC):
         self.y_pos = 620
         self.rect.center = (self.x_pos,self.y_pos)
     
+    def check_energy(self,owner) -> bool:
+        return self._cost <= owner.current_energy
+
     @abstractmethod
-    def check_target(owner, target): ...
+    def check_target(self,owner, target) -> bool: ...
 
     @abstractmethod
     def apply_card(self, owner, target):
@@ -48,7 +52,11 @@ class Card(ABC):
         Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta.
         """ 
         owner.current_energy -= self._cost
+        owner.deck.discard_card(self)
+        owner.deck.selected_card = None
 
+    def validate_application(self,owner,target) -> bool:
+        return (self.check_energy(owner) and self.check_target(owner,target) and target.check_is_alive())
 
 class AttackCard(Card):
     """
@@ -65,7 +73,7 @@ class AttackCard(Card):
     type : str, optional
         Tipo da Carta dentre os definidos: "Attack", "Defense", etc, por default "attack"
     """
-    def __init__(self, name, cost, damage: int, type="attack"):
+    def __init__(self, name, cost, damage: int, type:str):
         super().__init__(name, cost, type)
         self._damage = damage
 
@@ -77,39 +85,29 @@ class AttackCard(Card):
         ----------
 
         """
-        # esse card não pode ser aplicado em si mesmo
-        if target == owner:
-            return False
-        else:
-            return True
+        return not owner == target
 
     def apply_card(self, owner, target):
         """
         Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta. Aqui, diminui o HP do alvo escolhido. 
         """
-        if self.check_target(owner,target) and owner.current_energy >= self._cost and target.is_alive:
-            
+        if self.validate_application(owner,target):
             if target.current_defense < self._damage:
                 # Subtrai a diferença entre o dano e a defesa da vida atual do alvo
                 new_target_hp = target.current_life - (self._damage - target.current_defense)
                 if new_target_hp <= 0:
                     target.current_life = 0 
-                    target.is_alive = False
                 else:
                     target.current_life = new_target_hp
                 target.current_defense = 0 
             else:
                 target.current_defense -= self._damage
             super().apply_card(owner,target)
-            owner.deck.discard_card(self)
-            owner.deck.selected_card = None
             owner.engage_attack()
             target.engage_hit()
-            if not target.is_alive:
-                target.death_animate()
 
 class DefenseCard(Card):
-    def __init__(self, name, cost, defense: int, type="defense"):
+    def __init__(self, name, cost, defense: int, type:str):
         super().__init__(name, cost, type)
         self._defense = defense
      
@@ -121,40 +119,81 @@ class DefenseCard(Card):
         ----------
 
         """
-        if target != owner:
-            # esse card só pode ser aplicado em si mesmo
-            return False
-        else:
-            return True
+        return(owner == target)
 
     def apply_card(self,owner,target):
         """
         Aplica as funcionalidades da carta no alvo escolhido e cobra o custo da carta. Aqui, aumenta a defesa do usuário. 
         """
-        if self.check_target(owner,target) and owner.current_energy >= self._cost and owner.is_alive:
+        if self.validate_application(owner,target):
             new_defense = target.current_defense + self._defense
             if new_defense > target.max_defense:
                 target.current_defense = target.max_defense
             else:
                 target.current_defense = new_defense
             super().apply_card(owner,target)
-            owner.deck.discard_card(self)
-            owner.deck.selected_card = None
+
         
-class EffectCard(Card):
-    def __init__(self, name, cost, poison: int, type = "effect"):
+class EffectCard(Card,ABC):
+    # Why Would init have poison if not all cards are poison - Need to generalize
+    # This only owrks because poison is the only effect card
+    def __init__(self, name:str, cost:int, type:str, status_effect_id:int, **kwargs):
         super().__init__(name, cost, type)
-        self.poison = poison
+        self.status_effect_info = kwargs
+        self.status_effect_id = status_effect_id
 
     def check_target(owner, target):
-        return super().check_target(target)
+        super().check_target(target)
     
-    def apply_card(self, owner, target) -> bool:
-        if self._name == "Acido" and target != owner:
-            target.poison += int(self.poison)
-            owner.deck.discard_card(self)
-            owner.deck.selected_card = None
-        if self._name == "Regen" and target == owner:
-            return True
-        else:
-            return False
+    def apply_card(self, owner, target):
+        super().apply_card(owner,target)
+
+    def instantiate_status_effect(self,status_effect_id:int,**kwargs) -> se.StatusEffect:
+        chosen_effect_type = se.EffectTypes(status_effect_id)
+        try:
+            if chosen_effect_type == se.EffectTypes.POISON:
+                duration = kwargs['duration']
+                damage = kwargs['damage']
+                return se.Poison(duration,damage)
+            elif chosen_effect_type == se.EffectTypes.ABSORPTION:
+                pass
+            elif chosen_effect_type == se.EffectTypes.REGEN:
+                duration = kwargs['duration']
+                heal = kwargs['heal']
+                return se.Regen(duration,heal)
+            elif chosen_effect_type == se.EffectTypes.STRENGTH:
+                pass
+        except KeyError as error:
+            print(f'{error}:inadequate parameters passed for {chosen_effect_type} card - {kwargs}')
+
+class OffensiveEffectCard(EffectCard):
+    def __init__(self, name:str, cost:int, type:str, status_effect_id:int,**kwargs):
+        super().__init__(name, cost, type, status_effect_id,**kwargs)
+
+    def check_target(self,owner, target):
+        return not(owner == target)
+    
+    def apply_card(self, owner, target):
+        if self.validate_application(owner,target):
+            status_effect = self.instantiate_status_effect(self.status_effect_id,
+                                                            **self.status_effect_info)
+            owner.engage_attack()
+            status_effect.apply_effect(target)
+            target.applied_offensive_effects.append(status_effect)
+            super().apply_card(owner, target)
+
+
+class DefensiveEffectCard(EffectCard):
+    def __init__(self, name:str, cost:int, type:str, status_effect_id:int,**kwargs):
+        super().__init__(name, cost, type, status_effect_id,**kwargs)
+
+    def check_target(self,owner, target):
+        return (owner == target)
+    
+    def apply_card(self, owner, target):
+        if self.validate_application(owner,target):
+            status_effect = self.instantiate_status_effect(self.status_effect_id,
+                                                            **self.status_effect_info)
+            status_effect.apply_effect(target)
+            target.applied_defensive_effects.append(status_effect)
+            super().apply_card(owner, target)

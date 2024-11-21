@@ -75,7 +75,7 @@ class CombatLevel:
 
     def execute_enemy_turn(self,enemy:Enemy,target:Ulisses) -> bool:
         enemy_turn_played = False
-        if enemy.is_alive and enemy.current_energy > 0 and len(enemy.deck.hand) > 0:
+        if enemy.check_is_alive() and enemy.current_energy > 0 and len(enemy.deck.hand) > 0:
             #Selecionamos smepre a primeira carta do baralho
             enemy.deck.selected_card = enemy.deck.hand[0]
             if enemy.deck.selected_card._type == 'attack':
@@ -90,12 +90,12 @@ class CombatLevel:
         return enemy_turn_played
 
     def player_combat_loop(self,ulisses:Ulisses,mouse_pos:tuple):
-        if ulisses.is_alive:
+        if ulisses.check_is_alive():
             if ulisses.deck.selected_card:
                 if ulisses.rect.collidepoint(mouse_pos):
                     ulisses.deck.selected_card.apply_card(ulisses,ulisses)
                 for enemy in self.instantiated_enemies:
-                    if enemy.rect.collidepoint(mouse_pos) and enemy.is_alive:
+                    if enemy.rect.collidepoint(mouse_pos) and enemy.check_is_alive():
                         ulisses.deck.selected_card.apply_card(ulisses,enemy) 
             for each_card in ulisses.deck.hand:
                 if each_card.rect.collidepoint(mouse_pos):
@@ -105,23 +105,23 @@ class CombatLevel:
                         ulisses.deck.selected_card = each_card  
 
     def end_player_turn(self,ulisses:Ulisses):
-        self.is_player_turn = False
-        ulisses.current_energy = ulisses.max_energy
         for each_enemy in self.instantiated_enemies:
             each_enemy.current_defense = 0
-            each_enemy.poison_decay()
-            each_enemy.regen_decay()
-        ulisses.deck.shuffle_and_allocate()
-        for each_enemy in self.instantiated_enemies:
             each_enemy.deck.shuffle_and_allocate()
+            each_enemy.apply_offensive_effects()
+            each_enemy.apply_defensive_effects()
+        ulisses.current_energy = ulisses.max_energy
+        ulisses.deck.shuffle_and_allocate()
+        self.is_player_turn = False
+
 
     def end_enemies_turn(self,ulisses:Ulisses):
-        self.is_player_turn = True  
         ulisses.current_defense = 0 
-        ulisses.poison_decay()
-        ulisses.regen_decay()
+        ulisses.apply_offensive_effects()
+        ulisses.apply_defensive_effects()
         for each_enemy in self.instantiated_enemies:
             each_enemy.current_energy = each_enemy.max_energy
+        self.is_player_turn = True  
 
     def check_enemy_animating(self) -> bool:
         for each_enemy in self.instantiated_enemies:
@@ -139,6 +139,7 @@ class CombatLevel:
                 self.end_player_turn(ulisses)
             elif event.key == pygame.K_a:
                 ulisses.attack_animate()
+
     def run_animations(self,ulisses:Ulisses):
         if ulisses.animation_state == AnimationState.ATTACK or ulisses.animation_state == AnimationState.RETREAT:
             ulisses.attack_animate(invert_direction=False)
@@ -149,12 +150,12 @@ class CombatLevel:
                 each_enemy.attack_animate(invert_direction=True)
             elif each_enemy.animation_state == AnimationState.SHAKE:
                 each_enemy.hit_animate()
-    def update(self,ulisses:Ulisses):
-        for enemy in self.instantiated_enemies:
-            if enemy.current_life <= 0:
-                enemy.is_alive = False
-                enemy.death_animate()
 
+    def update(self,ulisses:Ulisses):
+        all_entities = [ulisses] + self.instantiated_enemies
+        for each_entity in all_entities:
+            if not each_entity.check_is_alive():
+                each_entity.death_animate()
         if not self.is_player_turn and not self.check_enemy_animating():
             self.execute_enemy_combat_loop(ulisses)
         self.run_animations(ulisses)
