@@ -30,23 +30,25 @@ class Poison(StatusEffect):
         super().__init__(duration)
         self.damage = damage
     def apply_effect(self,affected):
-        affected.engage_hit()
-        new_health = affected.current_life - self.damage
-        if new_health <= 0:
-            affected.current_life = 0
-        else:
-            affected.current_life = new_health
-        self.damage -= 1
-        super().apply_effect()
+        if affected.check_is_alive():
+            affected.engage_hit()
+            new_health = affected.current_life - self.damage
+            if new_health <= 0:
+                affected.current_life = 0
+            else:
+                affected.current_life = new_health
+            self.damage -= 1
+            super().apply_effect()
 
 class Regen(StatusEffect):
     def __init__(self, duration:int, heal:int):
         super().__init__(duration)
         self.heal = heal
     def apply_effect(self,affected):
-        new_health = affected.current_life + self.heal
-        if new_health >= affected.max_hp:
-            affected.current_life = affected.max_hp
-        else:
-            affected.current_life = new_health
-        super().apply_effect()
+        if affected.check_is_alive():
+            new_health = affected.current_life + self.heal
+            if new_health >= affected.max_hp:
+                affected.current_life = affected.max_hp
+            else:
+                affected.current_life = new_health
+            super().apply_effect()
