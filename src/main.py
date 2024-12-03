@@ -12,16 +12,17 @@ from map_node import MapNode, MapNodeType
 from fireplace import FireplaceScreen
 from menu import MenuScreen
 
-ulisses = Ulisses()
 def init(surface: pygame.Surface):
+    ulisses = Ulisses()
+
     map = MapScreen(surface)
     fireplace = FireplaceScreen(surface, map, 20)
-    combat = CombatLevel(surface, background_name="test_bg", staged_enemies=['Ogre'], ulisses=ulisses)
+    combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Ogre'], ulisses=ulisses)
 
     root = MapNode((220, 450), MapNodeType.STORY, None)
-    child = MapNode((250, 350), MapNodeType.FIREPLACE, fireplace)
+    child = MapNode((200, 350), MapNodeType.BATTLE, combat)
+    child.add_child(MapNode((250, 270), MapNodeType.FIREPLACE, fireplace))
     root.add_child(child)
-    child.add_child(MapNode((200, 270), MapNodeType.BATTLE, combat))
 
     map.load(root)
 

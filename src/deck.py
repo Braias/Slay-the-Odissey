@@ -72,7 +72,7 @@ class Deck:
         del(self.draw_pile[:5])
         # posicionamos as cartas no display e consturimos nossa mao
         for card_index,card in enumerate(next_hand):
-            card.x_pos = 100+150*card_index
+            card.x_pos = 100 + 75 * card_index
         self.hand = next_hand
     
     def build_draw_pile(self,draw_pile_ids:list):

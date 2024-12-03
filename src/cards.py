@@ -34,10 +34,10 @@ class Card(ABC):
         img_path = game_dir / "assets" / f"{name}.png"
         img = pygame.image.load(img_path)
         
-        self.sprite = pygame.transform.scale(img,(150,150))
+        self.sprite = pygame.transform.scale(img,(75,75))
         self.rect = self.sprite.get_rect()
-        self.x_pos = 100
-        self.y_pos = 620
+        self.x_pos = 50
+        self.y_pos = 310
         self.rect.center = (self.x_pos,self.y_pos)
     
     def check_energy(self,owner) -> bool:

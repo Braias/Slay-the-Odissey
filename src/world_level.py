@@ -43,8 +43,7 @@ class CombatLevel(Screen):
     def draw(self,):
         """Método responsável por desenhar todo cenario e inimigos do estágio
         """
-        self.screen.blit(self.background_img,(0,0))
-        pygame.draw.rect(self.screen,color='brown',rect=pygame.Rect(0, 540,800,160))
+        self.screen.blit(self.background_img,((self.screen.get_width() - self.background_img.get_width()) >> 1,-40))
         self.instantiate_enemies()
         self.draw_enemies()
         self.ulisses.draw_entity(self.screen)
@@ -65,8 +64,8 @@ class CombatLevel(Screen):
         if num_staged_enemies != num_instantiated_enemies:
             for enemy_index,staged_enemy in enumerate(self.staged_enemies):
                 self.instantiated_enemies.append(Enemy(name=staged_enemy))
-                self.instantiated_enemies[enemy_index].x_pos -= 150*enemy_index
-                self.instantiated_enemies[enemy_index].origin_x -= 150*enemy_index
+                self.instantiated_enemies[enemy_index].x_pos -= 75 * enemy_index
+                self.instantiated_enemies[enemy_index].origin_x -= 75 * enemy_index
     
     def execute_enemy_combat_loop(self,):
         for each_enemy in self.instantiated_enemies:
@@ -82,8 +81,7 @@ class CombatLevel(Screen):
         if enemy.check_is_alive() and enemy.current_energy > 0 and len(enemy.deck.hand) > 0:
             #Selecionamos smepre a primeira carta do baralho
             enemy.deck.selected_card = enemy.deck.hand[0]
-            if enemy.deck.selected_card._type == 'attack':
-                enemy.deck.selected_card.apply_card(enemy,target)
+            if enemy.deck.selected_card._type == 'attack': enemy.deck.selected_card.apply_card(enemy,target)
             elif enemy.deck.selected_card._type == 'defense':
                 enemy.deck.selected_card.apply_card(enemy,enemy)
             # Caso o inimgo nao tenha energia para jogar a carta atual ainda queremos 
