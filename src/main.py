@@ -10,6 +10,7 @@ import pygame
 from map import MapScreen
 from map_node import MapNode, MapNodeType
 from fireplace import FireplaceScreen
+from menu import MenuScreen
 
 def init(surface: pygame.Surface):
     map = MapScreen(surface)
@@ -22,7 +23,7 @@ def init(surface: pygame.Surface):
 
     map.load(root)
 
-    return map
+    return MenuScreen(surface, map)
 
 # fim Temporário ---------------------
 
