@@ -2,7 +2,9 @@ from pathlib import Path
 import pygame
 from entities import Enemy,Ulisses,AnimationState
 import time
-class CombatLevel:
+from screen import Screen
+
+class CombatLevel(Screen):
     """
     Classe para gerenciar um nível de combate em um jogo.
 
