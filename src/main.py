@@ -4,7 +4,6 @@ import pygame
 
 
 
-
 # Temporário ---------------------
 
 from map import MapScreen
