@@ -24,7 +24,10 @@ class MapNode:
         self.is_active = False # Esse é o nó em que o jogador se encontra?
 
     # Na prática, cria arestas direcionadas do nó atual aos passados em `args`
-    def add_child(self, *args: list[Self]):
+    def add_children(self, *args: list[Self]):
+        if any([v in self.children for v in args]):
+            raise ValueError("Arestas paralelas não são permitidas")
+
         self.children += args
 
     # Atualiza as propriedades dos nós para refletir a ação do jogador ter

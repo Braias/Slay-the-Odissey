@@ -18,8 +18,8 @@ def init(surface: pygame.Surface):
 
     root = MapNode((220, 450), MapNodeType.STORY, None)
     child = MapNode((250, 350), MapNodeType.FIREPLACE, fireplace)
-    root.add_child(child)
-    child.add_child(MapNode((200, 270), MapNodeType.FIREPLACE, fireplace))
+    root.add_children(child)
+    child.add_children(MapNode((200, 270), MapNodeType.FIREPLACE, fireplace))
 
     map.load(root)
 
