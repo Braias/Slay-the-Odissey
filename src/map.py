@@ -170,8 +170,8 @@ class MapScreen(Screen):
             inc = diff / num_marks if num_marks != 0 else pygame.math.Vector2(0, 0)
 
             for i in range(num_marks + 1):
-                x = (int(origin.pos.x) + i) % 4
-                x += 4 * (child.is_navigable or child.was_visited)
+                x = (int(origin.pos.x) + i) % 4 # Variações
+                x += 4 * child.was_visited # Cor
                 y = angle_idx % 6
 
                 sprite = self.trail_marks_sprite.subsurface((x << 4, y << 4, 16, 16))
