@@ -96,7 +96,7 @@ class Entity():
             background_width = 75
 
             # Rendereizando fonte e calculando tamanho de cada barra
-            hp_text_img = pygame.font.SysFont('Arial', 9).render(f'{self.current_life}/{self.max_hp}', True, 'white')
+            hp_text_img = pygame.font.Font("assets/pixel_font.ttf", 9).render(f'{self.current_life}/{self.max_hp}', True, 'white')
             health_bar_size = background_width * (self.current_life / self.max_hp)
             defense_bar_size = background_width * (self.current_defense / self.max_defense)
 
@@ -104,7 +104,7 @@ class Entity():
             self.__draw_status_rectangle(screen, background_width,  5, defense_bar_size, x + 25, y, 'blue', 'gray')
 
             # Desenhar texto indicador de vida atual
-            screen.blit(hp_text_img, (x + 25, y - 13))
+            screen.blit(hp_text_img, (x + 27, y - 12))
 
     def check_is_alive(self):
         return self.current_life > 0
@@ -211,9 +211,9 @@ class Ulisses(Entity):
         
     def draw_status_bar(self,screen:pygame.display):
         super().draw_status_bar(screen)
-        energy_text_img = pygame.font.SysFont('Arial', 20).render(f'{self.current_energy}', True, 'white')
+        energy_text_img = pygame.font.Font("assets/pixel_font.ttf", 18).render(f'{self.current_energy}', True, 'white')
         pygame.draw.circle(screen,pygame.Color('#3dad62'),(35,250),15)
-        screen.blit(energy_text_img,(28,238))
+        screen.blit(energy_text_img,(30,242))
 
     def insufficient_energy_animate(self):
         pass
