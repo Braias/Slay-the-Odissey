@@ -38,7 +38,7 @@ class CombatLevel(Screen):
             self.instantiated_enemies = []
             self.is_player_turn = True
         except FileNotFoundError as error:
-            print(f"{error}: background assest not found in 'assets")
+            print(f"{error}: background asset not found in 'assets")
 
     def draw(self,):
         """Método responsável por desenhar todo cenario e inimigos do estágio

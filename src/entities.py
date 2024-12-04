@@ -66,7 +66,7 @@ class Entity():
             self.animation_state = AnimationState.REST
             self.animation_start_time = None
         except FileNotFoundError as error:
-            print(f"{error}: assest of name {self.name} was not found in folder 'assets'")
+            print(f"{error}: asset of name {self.name} was not found in folder 'assets'")
     def __str__(self):
         return f"name:{self.name}\ndeck:{self.deck.__str__()}\nenergy:{self.current_energy}/{self.max_energy}"
     

@@ -123,9 +123,9 @@ class MapScreen(Screen):
             self.dragging = False
 
     def _load_sprites(self):
-        self.map_sprite = pygame.image.load("assests/map_bg.png").convert_alpha()
+        self.map_sprite = pygame.image.load("assets/map_bg.png").convert_alpha()
 
-        ss = pygame.image.load("assests/map_icons.png").convert_alpha()
+        ss = pygame.image.load("assets/map_icons.png").convert_alpha()
         self.node_sprites = [
             ss.subsurface((144, 0,  48, 48)), # nó de fogueira distante
             ss.subsurface((144, 48,  48, 48)), # nó de história distante
@@ -148,7 +148,7 @@ class MapScreen(Screen):
             ss.subsurface((64,  144, 64, 64)),
         ]
 
-        self.trail_marks_sprite = pygame.image.load("assests/map_trail_marks.png").convert_alpha()
+        self.trail_marks_sprite = pygame.image.load("assets/map_trail_marks.png").convert_alpha()
 
     # Desenha as arestas entre um nó e todos os seus "filhos". O desenho é feito
     # diretamente na textura do mapa ao invés de na tela, o que evita que as

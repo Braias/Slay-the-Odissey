@@ -15,7 +15,7 @@ class FireplaceScreen(Screen):
         self.text_surface = font.render(f"Você recuperou {hp} HP", False, (255,255,255))
         self.text_pos = (surface_size + (-self.text_surface.get_width(), 100)) / 2
 
-        ss = pygame.image.load("assests/fireplace.png")
+        ss = pygame.image.load("assets/fireplace.png")
         self.sprites = [
             ss.subsurface((0,0,64,64)),
             ss.subsurface((64,0,64,64)),
