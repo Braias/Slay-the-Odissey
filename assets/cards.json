@@ -44,6 +44,12 @@
             "type":"defensive_effect",
             "status_effect_id":3,
             "status_effect_info":{"damage_percent_buff":0.3,"duration":3}
+        },
+        "Pedra_Sisifo":{
+            "name":"Pedra_sisifo",
+            "cost":3,
+            "damage":42,
+            "type":"attack"
         }
     }
 }
