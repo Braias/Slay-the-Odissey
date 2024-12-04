@@ -17,11 +17,13 @@ def init(surface: pygame.Surface):
 
     map = MapScreen(surface)
     fireplace = FireplaceScreen(surface, map, 20, ulisses)
-    combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Ogre'], ulisses=ulisses)
+    combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Ogre'], ulisses=ulisses, next_screen=map)
+    new_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Ogre'], ulisses=ulisses, next_screen=map)
 
     root = MapNode((220, 450), MapNodeType.STORY, None)
     child = MapNode((200, 350), MapNodeType.BATTLE, combat)
-    child.add_child(MapNode((250, 270), MapNodeType.FIREPLACE, fireplace))
+    child.add_child(MapNode((250, 270), MapNodeType.BATTLE, new_combat))
+
     root.add_child(child)
 
     map.load(root)

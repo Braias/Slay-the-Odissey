@@ -206,7 +206,6 @@ class Ulisses(Entity):
         self.level = 0
         self.xp = 0
         self.coins = 0
-        self.health_regain = 8
         self.deck.shuffle_and_allocate()
         
     def draw_status_bar(self,screen:pygame.display):
