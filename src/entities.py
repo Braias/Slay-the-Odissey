@@ -53,7 +53,7 @@ class Entity():
 
             img_path = game_dir / "assets" / f"{self.name}.png"
             img = pygame.image.load(img_path)
-            self.sprite = pygame.transform.scale(img,(150,150)) # fixa as dimensões de todas as entidades em quadrados de 150x150
+            self.sprite = pygame.transform.scale(img,(150 * .7,150 * .7)) # fixa as dimensões de todas as entidades em quadrados de 150x150
 
             self.max_energy = entity_info['max_energy']
             self.current_energy = entity_info['max_energy']
@@ -66,7 +66,7 @@ class Entity():
             self.animation_state = AnimationState.REST
             self.animation_start_time = None
         except FileNotFoundError as error:
-            print(f"{error}: assest of name {self.name} was not found in folder 'assets'")
+            print(f"{error}: asset of name {self.name} was not found in folder 'assets'")
     def __str__(self):
         return f"name:{self.name}\ndeck:{self.deck.__str__()}\nenergy:{self.current_energy}/{self.max_energy}"
     
@@ -92,19 +92,19 @@ class Entity():
     def draw_status_bar(self, screen: pygame.display):
         if self.check_is_alive():
             # Coordenadas Base e dimensoes para retangulos - deslocados para canto esquero do personagem
-            x, y = self.x_pos - 75, self.y_pos - 75
-            background_width = 100
+            x, y = self.x_pos - 62, self.y_pos - 50
+            background_width = 75
 
             # Rendereizando fonte e calculando tamanho de cada barra
-            hp_text_img = pygame.font.SysFont('Arial', 18).render(f'{self.current_life}/{self.max_hp}', True, 'white')
+            hp_text_img = pygame.font.Font("assets/pixel_font.ttf", 9).render(f'{self.current_life}/{self.max_hp}', True, 'white')
             health_bar_size = background_width * (self.current_life / self.max_hp)
             defense_bar_size = background_width * (self.current_defense / self.max_defense)
 
-            self.__draw_status_rectangle(screen, background_width, 20, health_bar_size,  x + 25, y - 23, 'red', 'grey')
+            self.__draw_status_rectangle(screen, background_width, 10, health_bar_size,  x + 25, y - 13, 'red', 'grey')
             self.__draw_status_rectangle(screen, background_width,  5, defense_bar_size, x + 25, y, 'blue', 'gray')
 
             # Desenhar texto indicador de vida atual
-            screen.blit(hp_text_img, (x + 25, y - 23))
+            screen.blit(hp_text_img, (x + 27, y - 12))
 
     def check_is_alive(self):
         return self.current_life > 0
@@ -112,7 +112,7 @@ class Entity():
     def death_animate(self):
         img_path = game_dir / "assets" / "death" / f"RIP.png"
         img = pygame.image.load(img_path)
-        self.sprite = pygame.transform.scale(img,(150,150)) 
+        self.sprite = pygame.transform.scale(img,(75, 75)) 
 
     def engage_hit(self):
         self.animation_state = AnimationState.SHAKE
@@ -183,9 +183,7 @@ class Enemy(Entity):
     """
     def __init__(self, name:str):
         entity_info = default_entity_configurations['entities'][name]
-        super().__init__(name=name,
-                         x_pos=700,
-                         y_pos=375)
+        super().__init__(name=name, x_pos=400, y_pos=185)
         self.drop_xp = entity_info['drop_xp']
 
 class Ulisses(Entity):
@@ -204,7 +202,7 @@ class Ulisses(Entity):
             Quantidade de vida ganha ao terminar um combate
     """
     def __init__(self):
-        super().__init__(name="Ulisses",x_pos = 80,y_pos = 375)
+        super().__init__(name="Ulisses",x_pos = 100,y_pos = 185)
         self.level = 0
         self.xp = 0
         self.coins = 0
@@ -213,9 +211,9 @@ class Ulisses(Entity):
         
     def draw_status_bar(self,screen:pygame.display):
         super().draw_status_bar(screen)
-        energy_text_img = pygame.font.SysFont('Arial', 34).render(f'{self.current_energy}', True, 'white')
-        pygame.draw.circle(screen,pygame.Color('#3dad62'),(75,500),20)
-        screen.blit(energy_text_img,(65,480))
+        energy_text_img = pygame.font.Font("assets/pixel_font.ttf", 18).render(f'{self.current_energy}', True, 'white')
+        pygame.draw.circle(screen,pygame.Color('#3dad62'),(35,250),15)
+        screen.blit(energy_text_img,(30,242))
 
     def insufficient_energy_animate(self):
         pass

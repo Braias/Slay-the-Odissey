@@ -1,18 +1,21 @@
 import pygame
 from screen import Screen
+from entities import Ulisses
 
 class FireplaceScreen(Screen):
-    def __init__(self, surface: pygame.Surface, next_screen: Screen, hp: int):
+    def __init__(self, surface: pygame.Surface, next_screen: Screen, hp: int, ulisses: Ulisses):
         self.surface = surface
         self.map = next_screen
         surface_size = pygame.Vector2(surface.get_size())
         self.sprite_pos = surface_size / 2 - (32,32)
+        self.ulisses = ulisses
+        self.hp = hp
 
         font = pygame.font.SysFont("Times New Roman", 16)
         self.text_surface = font.render(f"Você recuperou {hp} HP", False, (255,255,255))
         self.text_pos = (surface_size + (-self.text_surface.get_width(), 100)) / 2
 
-        ss = pygame.image.load("assests/fireplace.png")
+        ss = pygame.image.load("assets/fireplace.png")
         self.sprites = [
             ss.subsurface((0,0,64,64)),
             ss.subsurface((64,0,64,64)),
@@ -41,3 +44,4 @@ class FireplaceScreen(Screen):
     def onenter(self):
         self.animation_time = 0
         self.timeout = 0
+        self.ulisses.current_life = min(self.ulisses.current_life + self.hp, self.ulisses.max_hp)
