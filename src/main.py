@@ -16,7 +16,7 @@ def init(surface: pygame.Surface):
     ulisses = Ulisses()
 
     map = MapScreen(surface)
-    fireplace = FireplaceScreen(surface, map, 20)
+    fireplace = FireplaceScreen(surface, map, 20, ulisses)
     combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Ogre'], ulisses=ulisses)
 
     root = MapNode((220, 450), MapNodeType.STORY, None)
