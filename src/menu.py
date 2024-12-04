@@ -17,11 +17,11 @@ class MenuScreen(Screen):
         self.buttons = []
         self.pressed_play = False
         self.surface = surface
-        self.title_surface = pygame.font.Font("assets/font.ttf", 50).render("Slay the Odissey", True, "#b68f40")
-        self.title_pos = (self.surface.get_width() / 2 - self.title_surface.get_width() / 2, 30)
+        self.title_surface = pygame.font.Font("assets/title-font.ttf", 39).render("Slay the Odyssey", True, "#ffffff")
+        self.title_pos = ((self.surface.get_width() - self.title_surface.get_width()) >> 1, 30)
 
         self.buttons.append(Button(
-            (self.surface.get_width() / 2, 140),
+            (self.surface.get_width() / 2, 160),
             (200, 50),
             "Jogar",
             self.font
@@ -65,5 +65,5 @@ class MenuScreen(Screen):
             button.draw(self.surface)
             
     def _load_sprites(self):
-        self.menu_sprite = pygame.image.load("assets/artRio.png")
-        self.font = pygame.font.Font("assets/font.ttf", 30)
+        self.menu_sprite = pygame.image.load("assets/menu_bg.png")
+        self.font = pygame.font.Font("assets/pixel_font.ttf", 18)
