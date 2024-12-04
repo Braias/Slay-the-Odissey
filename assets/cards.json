@@ -3,29 +3,29 @@
         "Facada_lvl_1":{
             "name":"Facada_lvl_1",
             "cost":1,
-            "damage":30,
+            "damage":8,
             "type":"attack"
         },
         "Tapa_lvl_1":{
             "name":"Tapa_lvl_1",
             "cost": 0,
-            "damage": 10,
+            "damage": 4,
             "type":"attack"
         },
         "Cabecada_lvl_1":{
             "name": "Cabecada_lvl_1",
             "cost": 1,
-            "damage": 9,
+            "damage": 6,
             "type": "attack"
         },
         "Escudo_lvl_1":{
             "name":"Escudo_lvl_1",
             "cost":1,
-            "defense":25,
+            "defense":7,
             "type":"defense"
         },
-        "Acido_lvl_1":{
-            "name":"Acido_lvl_1",
+        "Veneno_lvl_1":{
+            "name":"Veneno_lvl_1",
             "cost":1,
             "type":"offensive_effect",
             "status_effect_id":0,
@@ -44,6 +44,19 @@
             "type":"defensive_effect",
             "status_effect_id":3,
             "status_effect_info":{"damage_percent_buff":0.3,"duration":3}
+        },
+        "Pedra_Sisifo":{
+            "name":"Pedra_sisifo",
+            "cost":3,
+            "damage":42,
+            "type":"attack"
+        },
+        "Fraqueza_lvl_1":{
+            "name":"Fraqueza",
+            "cost": 1,
+            "type": "offensive_effect",
+            "status_effect_id": 4,
+            "status_effect_info":{"damage_percent_debuff":0.5,"duration":2}
         }
     }
 }

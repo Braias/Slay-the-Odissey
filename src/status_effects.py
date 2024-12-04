@@ -6,6 +6,7 @@ class EffectTypes(Enum):
     REGEN = 1
     ABSORPTION = 2
     STRENGTH = 3
+    WEAKNESS = 4
 
 class StatusEffect(ABC):
     """_summary_
@@ -61,4 +62,14 @@ class Strength(StatusEffect):
     def apply_effect(self,affected):
         if affected.check_is_alive():
             affected.damage_multiplier += self.damage_percent_buff
+            super().apply_effect()
+
+class Weakness(StatusEffect):
+    def __init__(self, duration, damage_percent_debuff:float):
+        super().__init__(duration)
+        self.damage_percent_debuff = damage_percent_debuff
+
+    def apply_effect(self, affected):        
+        if affected.check_is_alive():
+            affected.damage_multiplier -= self.damage_percent_debuff
             super().apply_effect()

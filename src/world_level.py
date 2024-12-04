@@ -3,6 +3,14 @@ import pygame
 from entities import Enemy,Ulisses,AnimationState
 import time
 from screen import Screen
+import json
+
+game_dir = Path(__file__).parent.parent
+cards_json_path = game_dir / "assets" / "cards.json"
+
+# Carregando json de configuracoes para construir cartas
+with open(file=cards_json_path,mode='r') as card_config:
+    default_card_configurations = json.load(card_config)
 
 class CombatLevel(Screen):
     """
@@ -18,7 +26,7 @@ class CombatLevel(Screen):
         staged_enemies (list): Lista de nomes de inimigos para o estágio atual
         instantiated_enemies (list): Lista de instâncias de inimigos criados para o estágio atual
     """
-    def __init__(self,screen:pygame.display,background_name:str,staged_enemies:list, ulisses:Ulisses):
+    def __init__(self,screen:pygame.display,background_name:str,staged_enemies:list, ulisses:Ulisses, next_screen: Screen):
         """Método inicializa objetos da classe CombatLevel
 
         Parâmetros:
@@ -37,14 +45,14 @@ class CombatLevel(Screen):
             self.staged_enemies = staged_enemies
             self.instantiated_enemies = []
             self.is_player_turn = True
+            self.next_screen = next_screen
         except FileNotFoundError as error:
-            print(f"{error}: background assest not found in 'assets")
+            print(f"{error}: background asset not found in 'assets")
 
     def draw(self,):
         """Método responsável por desenhar todo cenario e inimigos do estágio
         """
-        self.screen.blit(self.background_img,(0,0))
-        pygame.draw.rect(self.screen,color='brown',rect=pygame.Rect(0, 540,800,160))
+        self.screen.blit(self.background_img,((self.screen.get_width() - self.background_img.get_width()) >> 1,-40))
         self.instantiate_enemies()
         self.draw_enemies()
         self.ulisses.draw_entity(self.screen)
@@ -65,8 +73,8 @@ class CombatLevel(Screen):
         if num_staged_enemies != num_instantiated_enemies:
             for enemy_index,staged_enemy in enumerate(self.staged_enemies):
                 self.instantiated_enemies.append(Enemy(name=staged_enemy))
-                self.instantiated_enemies[enemy_index].x_pos -= 150*enemy_index
-                self.instantiated_enemies[enemy_index].origin_x -= 150*enemy_index
+                self.instantiated_enemies[enemy_index].x_pos -= 75 * enemy_index
+                self.instantiated_enemies[enemy_index].origin_x -= 75 * enemy_index
     
     def execute_enemy_combat_loop(self,):
         for each_enemy in self.instantiated_enemies:
@@ -82,8 +90,7 @@ class CombatLevel(Screen):
         if enemy.check_is_alive() and enemy.current_energy > 0 and len(enemy.deck.hand) > 0:
             #Selecionamos smepre a primeira carta do baralho
             enemy.deck.selected_card = enemy.deck.hand[0]
-            if enemy.deck.selected_card._type == 'attack':
-                enemy.deck.selected_card.apply_card(enemy,target)
+            if enemy.deck.selected_card._type == 'attack': enemy.deck.selected_card.apply_card(enemy,target)
             elif enemy.deck.selected_card._type == 'defense':
                 enemy.deck.selected_card.apply_card(enemy,enemy)
             # Caso o inimgo nao tenha energia para jogar a carta atual ainda queremos 
@@ -136,7 +143,7 @@ class CombatLevel(Screen):
     
     def handle_event(self,event:pygame.event.Event,):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            current_mouse_pos = pygame.mouse.get_pos()
+            current_mouse_pos = event.dict["pos"]
             if self.is_player_turn:
                 self.player_combat_loop(current_mouse_pos)
         if event.type == pygame.KEYDOWN:
@@ -156,6 +163,19 @@ class CombatLevel(Screen):
             elif each_enemy.animation_state == AnimationState.SHAKE:
                 each_enemy.hit_animate()
 
+    def check_win(self):
+        enemy_is_dead = []
+        for each_enemy in self.instantiated_enemies:
+            enemy_is_dead.append(not each_enemy.check_is_alive())
+        return all(enemy_is_dead)
+    
+    def onenter(self):
+        self.ulisses.deck.shuffle_and_allocate()
+        self.ulisses.damage_multiplier = 1
+        self.ulisses.absorption_multiplier = 1
+        self.ulisses.current_defense = 0
+        self.ulisses.current_energy = self.ulisses.max_energy
+        
     def update(self):
         all_entities = [self.ulisses] + self.instantiated_enemies
         for each_entity in all_entities:
@@ -164,4 +184,6 @@ class CombatLevel(Screen):
         if not self.is_player_turn and not self.check_enemy_animating():
             self.execute_enemy_combat_loop()
         self.run_animations()
+        if self.check_win():
+            return self.next_screen
 
