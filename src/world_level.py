@@ -134,7 +134,7 @@ class CombatLevel(Screen):
     
     def handle_event(self,event:pygame.event.Event,):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            current_mouse_pos = pygame.mouse.get_pos()
+            current_mouse_pos = event.dict["pos"]
             if self.is_player_turn:
                 self.player_combat_loop(current_mouse_pos)
         if event.type == pygame.KEYDOWN:
