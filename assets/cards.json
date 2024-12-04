@@ -24,8 +24,8 @@
             "defense":7,
             "type":"defense"
         },
-        "Acido_lvl_1":{
-            "name":"Acido_lvl_1",
+        "Veneno_lvl_1":{
+            "name":"Veneno_lvl_1",
             "cost":1,
             "type":"offensive_effect",
             "status_effect_id":0,
@@ -50,6 +50,13 @@
             "cost":3,
             "damage":42,
             "type":"attack"
+        },
+        "Fraqueza_lvl_1":{
+            "name":"Fraqueza",
+            "cost": 1,
+            "type": "offensive_effect",
+            "status_effect_id": 4,
+            "status_effect_info":{"damage_percent_debuff":0.5,"duration":2}
         }
     }
 }
