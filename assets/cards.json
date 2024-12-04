@@ -3,25 +3,25 @@
         "Facada_lvl_1":{
             "name":"Facada_lvl_1",
             "cost":1,
-            "damage":30,
+            "damage":8,
             "type":"attack"
         },
         "Tapa_lvl_1":{
             "name":"Tapa_lvl_1",
             "cost": 0,
-            "damage": 10,
+            "damage": 4,
             "type":"attack"
         },
         "Cabecada_lvl_1":{
             "name": "Cabecada_lvl_1",
             "cost": 1,
-            "damage": 9,
+            "damage": 6,
             "type": "attack"
         },
         "Escudo_lvl_1":{
             "name":"Escudo_lvl_1",
             "cost":1,
-            "defense":25,
+            "defense":7,
             "type":"defense"
         },
         "Acido_lvl_1":{
