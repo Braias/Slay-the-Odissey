@@ -6,7 +6,7 @@
 
 Certifique-se de ter o Python instalado em sua máquina. Este projeto usa bibliotecas listadas no arquivo `requirements.txt`.
 
-## Instalação
+## Instalação e instruções para jogar
 
 1. Clone este repositório:
    ```bash
