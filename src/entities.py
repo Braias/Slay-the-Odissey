@@ -3,6 +3,7 @@ import pygame
 from deck import Deck
 import json
 from enum import Enum
+import pygame.mixer as pm
 
 game_dir = Path(__file__).parent.parent
 entities_json_path = game_dir / "assets" / "entities.json"
@@ -53,7 +54,7 @@ class Entity():
 
             img_path = game_dir / "assets" / f"{self.name}.png"
             img = pygame.image.load(img_path)
-            self.sprite = pygame.transform.scale(img,(150 * .7,150 * .7)) # fixa as dimensões de todas as entidades em quadrados de 150x150
+            self.sprite = pygame.transform.scale(img,(100 * .7,100 * .7)) # fixa as dimensões de todas as entidades em quadrados de 150x150
 
             self.max_energy = entity_info['max_energy']
             self.current_energy = entity_info['max_energy']
@@ -65,6 +66,8 @@ class Entity():
             self.origin_x = x_pos
             self.animation_state = AnimationState.REST
             self.animation_start_time = None
+
+            self.death_sound = pm.Sound(file="sounds/hit_sound.wav")
         except FileNotFoundError as error:
             print(f"{error}: asset of name {self.name} was not found in folder 'assets'")
     def __str__(self):
@@ -92,8 +95,8 @@ class Entity():
     def draw_status_bar(self, screen: pygame.display):
         if self.check_is_alive():
             # Coordenadas Base e dimensoes para retangulos - deslocados para canto esquero do personagem
-            x, y = self.x_pos - 62, self.y_pos - 50
-            background_width = 75
+            x, y = self.x_pos - 62, self.y_pos - 35
+            background_width = 65
 
             # Rendereizando fonte e calculando tamanho de cada barra
             hp_text_img = pygame.font.Font("assets/pixel_font.ttf", 9).render(f'{self.current_life}/{self.max_hp}', True, 'white')
@@ -121,10 +124,11 @@ class Entity():
     def engage_attack(self):
         self.animation_state = AnimationState.ATTACK
         self.animation_start_time = pygame.time.get_ticks()
+        self.death_sound.play()
 
     def attack_animate(self,invert_direction:bool):
         duration_ms = 400
-        x_displacement = 15
+        x_displacement = 10
         direction = (-1) ** (int(invert_direction))
 
         current_time = pygame.time.get_ticks()
@@ -157,6 +161,7 @@ class Entity():
             else:
                 self.x_pos = self.origin_x
                 self.animation_state = AnimationState.REST
+
 
     def apply_offensive_effects(self):
         for status_effect in self.applied_offensive_effects:
@@ -206,7 +211,6 @@ class Ulisses(Entity):
         self.level = 0
         self.xp = 0
         self.coins = 0
-        self.health_regain = 8
         self.deck.shuffle_and_allocate()
         
     def draw_status_bar(self,screen:pygame.display):

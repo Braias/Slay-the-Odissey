@@ -1,8 +1,17 @@
 from pathlib import Path
 import pygame
 from entities import Enemy,Ulisses,AnimationState
-import time
+import random
 from screen import Screen
+import json
+import pygame.mixer as pm
+
+game_dir = Path(__file__).parent.parent
+cards_json_path = game_dir / "assets" / "cards.json"
+
+# Carregando json de configuracoes para construir cartas
+with open(file=cards_json_path,mode='r') as card_config:
+    default_card_configurations = json.load(card_config)
 
 class CombatLevel(Screen):
     """
@@ -18,7 +27,7 @@ class CombatLevel(Screen):
         staged_enemies (list): Lista de nomes de inimigos para o estágio atual
         instantiated_enemies (list): Lista de instâncias de inimigos criados para o estágio atual
     """
-    def __init__(self,screen:pygame.display,background_name:str,staged_enemies:list, ulisses:Ulisses):
+    def __init__(self,screen:pygame.display,background_name:str,staged_enemies:list, ulisses:Ulisses, next_screen: Screen):
         """Método inicializa objetos da classe CombatLevel
 
         Parâmetros:
@@ -37,10 +46,13 @@ class CombatLevel(Screen):
             self.staged_enemies = staged_enemies
             self.instantiated_enemies = []
             self.is_player_turn = True
+            self.next_screen = next_screen
+
+            self.victory_sound = pm.Sound("sounds/victory_sound.wav")
         except FileNotFoundError as error:
             print(f"{error}: background asset not found in 'assets")
 
-    def draw(self,):
+    def draw(self):
         """Método responsável por desenhar todo cenario e inimigos do estágio
         """
         self.screen.blit(self.background_img,((self.screen.get_width() - self.background_img.get_width()) >> 1,-40))
@@ -154,6 +166,24 @@ class CombatLevel(Screen):
             elif each_enemy.animation_state == AnimationState.SHAKE:
                 each_enemy.hit_animate()
 
+    def check_win(self):
+        enemy_is_dead = []
+        for each_enemy in self.instantiated_enemies:
+            enemy_is_dead.append(not each_enemy.check_is_alive())
+        return all(enemy_is_dead)
+    
+    def onenter(self):
+        self.ulisses.deck.shuffle_and_allocate()
+        self.ulisses.damage_multiplier = 1
+        self.ulisses.absorption_multiplier = 1
+        self.ulisses.current_defense = 0
+        self.ulisses.current_energy = self.ulisses.max_energy
+        for enemy in self.instantiated_enemies:
+            enemy.current_life = enemy.max_hp
+            img_path = game_dir / "assets" / f"{enemy.name}.png"
+            img = pygame.image.load(img_path)
+            enemy.sprite = pygame.transform.scale(img,(150 * .7,150 * .7))
+        
     def update(self):
         all_entities = [self.ulisses] + self.instantiated_enemies
         for each_entity in all_entities:
@@ -162,4 +192,47 @@ class CombatLevel(Screen):
         if not self.is_player_turn and not self.check_enemy_animating():
             self.execute_enemy_combat_loop()
         self.run_animations()
+        if self.check_win():
+            self.victory_sound.play()
+            return self.next_screen
 
+class RewardScreen(Screen):
+    def __init__(self,surface:pygame.surface,ulisses:Ulisses,next_screen:Screen):
+        self.ulisses = ulisses 
+        self.next_screen = next_screen
+        self.surface = surface
+        self.reward_name = "---DEFAULT----"
+        self.reward = None
+        self.screen_ended = False
+
+
+    def randomize_reward(self):
+        reward_cards = list(default_card_configurations['cards'].keys())
+        reward_id = random.choice(reward_cards)
+        self.reward_name = reward_id.replace("_"," ")
+        return reward_id
+    
+    def onenter(self):
+        try:
+            self.reward = self.ulisses.deck.add_single_card(self.randomize_reward())
+        except FileNotFoundError as error:
+            print(f"{error}: Assest for rewarded card unavailable")
+        finally:
+            surface_size = pygame.Vector2(self.surface.get_size())
+            font = pygame.font.SysFont("Times New Roman", 16)
+            self.text_surface = font.render(f"""Você Ganhou {self.reward_name} -- 'E' para voltar ao mapa""", False, (255,255,255))
+            self.text_pos = (surface_size + (-self.text_surface.get_width(), 100)) / 2
+
+    def draw(self):
+        if self.reward:
+            self.reward.rect.center = self.surface.get_rect().center
+            self.surface.blit(self.reward.sprite,self.reward.rect)
+            self.surface.blit(self.text_surface, dest=self.text_pos)
+
+    def handle_event(self, event):
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
+            self.screen_ended = True
+
+    def update(self):
+        if self.screen_ended:
+            return self.next_screen

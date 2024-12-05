@@ -2,6 +2,11 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 import pygame
 import status_effects as se
+import pygame.mixer as pm
+
+pm.init()
+
+death_sound = pm.Sound("sounds/death_sound.wav")
 
 class InsufficientEnergyError(Exception):
     def __init__(self, message="A energia atual não é suficiente para essa carta"):
@@ -97,7 +102,8 @@ class AttackCard(Card):
                 damage = int((self._damage*owner.damage_multiplier)/target.absorption_multiplier)
                 new_target_hp = target.current_life - (damage - target.current_defense)
                 if new_target_hp <= 0:
-                    target.current_life = 0 
+                    target.current_life = 0
+                    death_sound.play()
                 else:
                     target.current_life = new_target_hp
                 target.current_defense = 0 

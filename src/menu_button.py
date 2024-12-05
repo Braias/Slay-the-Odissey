@@ -22,4 +22,4 @@ class Button():
 
     def on_mouse_motion(self, mouse_pos: pygame.Vector2):
         self.is_hovering = self.pos.x < mouse_pos.x < self.pos.x + self.size.x \
-        and self.pos.y < mouse_pos.y < self.pos.y + self.size.y
+            and self.pos.y < mouse_pos.y < self.pos.y + self.size.y

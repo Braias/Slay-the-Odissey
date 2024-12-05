@@ -6,7 +6,7 @@ import pygame
 
 # Temporário ---------------------
 from entities import Ulisses
-from world_level import CombatLevel
+from world_level import CombatLevel,RewardScreen
 from map import MapScreen
 from map_node import MapNode, MapNodeType
 from fireplace import FireplaceScreen
@@ -14,16 +14,60 @@ from menu import MenuScreen
 
 def init(surface: pygame.Surface):
     ulisses = Ulisses()
-
+    reward_screen = RewardScreen(surface,ulisses,map)
     map = MapScreen(surface)
     fireplace = FireplaceScreen(surface, map, 20, ulisses)
-    combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Ogre'], ulisses=ulisses)
+    ogre_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Ogre'], ulisses=ulisses, next_screen=reward_screen)
+    ogre_and_king_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Ogre', 'King'], ulisses=ulisses, next_screen=reward_screen)
+    king_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['King'], ulisses=ulisses, next_screen=reward_screen)
+    boss_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Posseidon'], ulisses=ulisses, next_screen=reward_screen)
+    cyclop_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Cyclop'], ulisses=ulisses, next_screen=reward_screen)
 
     root = MapNode((220, 450), MapNodeType.STORY, None)
-    child = MapNode((200, 350), MapNodeType.BATTLE, combat)
-    child.add_children(MapNode((250, 270), MapNodeType.FIREPLACE, fireplace))
-    root.add_children(child)
 
+    f1 = MapNode((200,180), MapNodeType.FIREPLACE, fireplace)
+    f2 = MapNode((150,100), MapNodeType.FIREPLACE, fireplace)
+    f3 = MapNode((290,130), MapNodeType.FIREPLACE, fireplace)
+
+    first_child_mid = MapNode((200, 350), MapNodeType.BATTLE, ogre_combat)
+    first_child_left = MapNode((130,380), MapNodeType.BATTLE, king_combat)
+    first_child_right = MapNode((300,380), MapNodeType.BATTLE, king_combat)
+
+    second_child_mid = MapNode((250, 270), MapNodeType.BATTLE, ogre_combat)
+    second_child_left = MapNode((100, 300), MapNodeType.BATTLE, ogre_combat)
+    second_child_right = MapNode((370, 310), MapNodeType.BATTLE, ogre_combat)
+
+    third_child_mid = MapNode((300, 262), MapNodeType.BATTLE, ogre_combat)
+    third_child_left = MapNode((120,230), MapNodeType.BATTLE, ogre_and_king_combat)
+    third_child_mid_left = MapNode((170, 250), MapNodeType.BATTLE, ogre_combat)
+    third_child_mid_right = MapNode((300, 210), MapNodeType.BATTLE, ogre_combat)
+
+    fourth_child_left = MapNode((100, 170), MapNodeType.BATTLE, ogre_combat)
+    fourth_child_mid = MapNode((240, 200), MapNodeType.BATTLE, ogre_combat)
+
+    boss = MapNode((220, 80), MapNodeType.BOSS, ogre_combat)
+
+    root.add_child(first_child_right)
+    root.add_child(first_child_left)
+    root.add_child(first_child_mid)
+    first_child_right.add_child(second_child_right)
+    first_child_left.add_child(second_child_left)
+    first_child_right.add_child(second_child_mid)
+    first_child_mid.add_child(second_child_mid)
+    second_child_mid.add_child(third_child_mid_right)
+    second_child_left.add_child(third_child_left)
+    second_child_right.add_child(third_child_mid)
+    second_child_mid.add_child(third_child_mid_left)
+    third_child_mid_left.add_child(f1)
+    third_child_left.add_child(f1)
+    third_child_left.add_child(fourth_child_left)
+    third_child_mid.add_child(fourth_child_mid)
+    third_child_mid_right.add_child(f3)
+    fourth_child_left.add_child(f2)
+    fourth_child_mid.add_child(boss)
+    f2.add_child(boss)
+    f1.add_child(boss)
+    f3.add_child(boss)
     map.load(root)
 
     return MenuScreen(surface, map)
