@@ -67,7 +67,7 @@ class Entity():
             self.animation_state = AnimationState.REST
             self.animation_start_time = None
 
-            self.death_sound = pm.Sound(file="sounds/hit.wav")
+            self.death_sound = pm.Sound(file="sounds/hit_sound.wav")
         except FileNotFoundError as error:
             print(f"{error}: asset of name {self.name} was not found in folder 'assets'")
     def __str__(self):
