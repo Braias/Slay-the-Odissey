@@ -1,6 +1,6 @@
 # Slay the Odyssey
 
-**Slay the Odyssey** é um jogo de cartas inspirado em *Slay the Spire*. Enfrente desafios, tome decisões estratégicas e lute contra inimigos em uma jornada épica!
+**Slay the Odyssey** é um jogo de cartas inspirado em *Slay the Spire*, um jogo do gênero rogue-like. Sua criação foi feita para a avaliação na matéria de Linguagens de Programação, com o objetivo de ensinar aos alunos a Programação Orientada a Objeto.
 
 ## Pré-requisitos
 
@@ -17,4 +17,4 @@ Certifique-se de ter o Python instalado em sua máquina. Este projeto usa biblio
 
 ## Assets
 
-Todos as sprites foram desenhadas por membros do grupo, utilizando ferramentas como Aseprite
+Todos as sprites foram desenhadas por membros do grupo, utilizando ferramentas como Aseprite.
