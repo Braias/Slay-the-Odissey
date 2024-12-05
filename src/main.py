@@ -17,11 +17,12 @@ def init(surface: pygame.Surface):
     map = MapScreen(surface)
     reward_screen = RewardScreen(surface,ulisses,map)
     fireplace = FireplaceScreen(surface, map, 20, ulisses)
-    ogre_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Ogre'], ulisses=ulisses, next_screen=reward_screen)
-    ogre_and_king_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Ogre', 'King'], ulisses=ulisses, next_screen=reward_screen)
-    king_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['King'], ulisses=ulisses, next_screen=reward_screen)
-    boss_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Posseidon'], ulisses=ulisses, next_screen=reward_screen)
-    cyclop_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Cyclop'], ulisses=ulisses, next_screen=reward_screen)
+    cyclop_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Ogre'], ulisses=ulisses, next_screen=reward_screen)
+    water_horse_and_cyclop = CombatLevel(surface, background_name="combat_bg", staged_enemies=['cyclop', 'water_horse'], ulisses=ulisses, next_screen=reward_screen)
+    water_horse_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['water_horse'], ulisses=ulisses, next_screen=reward_screen)
+    boss_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['poseidon'], ulisses=ulisses, next_screen=reward_screen)
+    cyclop_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['cyclop'], ulisses=ulisses, next_screen=reward_screen)
+    
 
     root = MapNode((220, 450), MapNodeType.STORY, None)
 
@@ -29,23 +30,23 @@ def init(surface: pygame.Surface):
     f2 = MapNode((150,100), MapNodeType.FIREPLACE, fireplace)
     f3 = MapNode((290,130), MapNodeType.FIREPLACE, fireplace)
 
-    first_child_mid = MapNode((200, 350), MapNodeType.BATTLE, ogre_combat)
-    first_child_left = MapNode((130,380), MapNodeType.BATTLE, king_combat)
-    first_child_right = MapNode((300,380), MapNodeType.BATTLE, king_combat)
+    first_child_mid = MapNode((200, 350), MapNodeType.BATTLE, cyclop_combat)
+    first_child_left = MapNode((130,380), MapNodeType.BATTLE, water_horse_combat)
+    first_child_right = MapNode((300,380), MapNodeType.BATTLE, water_horse_combat)
 
-    second_child_mid = MapNode((250, 270), MapNodeType.BATTLE, ogre_combat)
-    second_child_left = MapNode((100, 300), MapNodeType.BATTLE, ogre_combat)
-    second_child_right = MapNode((370, 310), MapNodeType.BATTLE, ogre_combat)
+    second_child_mid = MapNode((250, 270), MapNodeType.BATTLE, cyclop_combat)
+    second_child_left = MapNode((100, 300), MapNodeType.BATTLE, cyclop_combat)
+    second_child_right = MapNode((370, 310), MapNodeType.BATTLE, cyclop_combat)
 
-    third_child_mid = MapNode((300, 262), MapNodeType.BATTLE, ogre_combat)
-    third_child_left = MapNode((120,230), MapNodeType.BATTLE, ogre_and_king_combat)
-    third_child_mid_left = MapNode((170, 250), MapNodeType.BATTLE, ogre_combat)
-    third_child_mid_right = MapNode((300, 210), MapNodeType.BATTLE, ogre_combat)
+    third_child_mid = MapNode((300, 262), MapNodeType.BATTLE, cyclop_combat)
+    third_child_left = MapNode((120,230), MapNodeType.BATTLE, water_horse_and_cyclop)
+    third_child_mid_left = MapNode((170, 250), MapNodeType.BATTLE, cyclop_combat)
+    third_child_mid_right = MapNode((300, 210), MapNodeType.BATTLE, cyclop_combat)
 
-    fourth_child_left = MapNode((100, 170), MapNodeType.BATTLE, ogre_combat)
-    fourth_child_mid = MapNode((240, 200), MapNodeType.BATTLE, ogre_combat)
+    fourth_child_left = MapNode((100, 170), MapNodeType.BATTLE, cyclop_combat)
+    fourth_child_mid = MapNode((240, 200), MapNodeType.BATTLE, cyclop_combat)
 
-    boss = MapNode((220, 80), MapNodeType.BOSS, ogre_combat)
+    boss = MapNode((220, 80), MapNodeType.BOSS, boss_combat)
 
     root.add_children(first_child_right)
     root.add_children(first_child_left)
