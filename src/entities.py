@@ -3,6 +3,7 @@ import pygame
 from deck import Deck
 import json
 from enum import Enum
+import pygame.mixer as pm
 
 game_dir = Path(__file__).parent.parent
 entities_json_path = game_dir / "assets" / "entities.json"
@@ -65,6 +66,8 @@ class Entity():
             self.origin_x = x_pos
             self.animation_state = AnimationState.REST
             self.animation_start_time = None
+
+            self.death_sound = pm.Sound(file="sounds/hit.wav")
         except FileNotFoundError as error:
             print(f"{error}: asset of name {self.name} was not found in folder 'assets'")
     def __str__(self):
@@ -121,6 +124,7 @@ class Entity():
     def engage_attack(self):
         self.animation_state = AnimationState.ATTACK
         self.animation_start_time = pygame.time.get_ticks()
+        self.death_sound.play()
 
     def attack_animate(self,invert_direction:bool):
         duration_ms = 400
@@ -157,6 +161,7 @@ class Entity():
             else:
                 self.x_pos = self.origin_x
                 self.animation_state = AnimationState.REST
+
 
     def apply_offensive_effects(self):
         for status_effect in self.applied_offensive_effects:
