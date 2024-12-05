@@ -3,8 +3,6 @@ import pygame
 
 
 
-
-# Temporário ---------------------
 from entities import Ulisses
 from world_level import CombatLevel,RewardScreen
 from map import MapScreen
@@ -73,7 +71,6 @@ def init(surface: pygame.Surface):
 
     return MenuScreen(surface, map)
 
-# fim Temporário ---------------------
 
 
 
