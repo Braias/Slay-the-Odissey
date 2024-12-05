@@ -14,14 +14,14 @@ from menu import MenuScreen
 
 def init(surface: pygame.Surface):
     ulisses = Ulisses()
-
+    reward_screen = RewardScreen(surface,ulisses,map)
     map = MapScreen(surface)
     fireplace = FireplaceScreen(surface, map, 20, ulisses)
-    ogre_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Ogre'], ulisses=ulisses, next_screen=map)
-    ogre_and_king_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Ogre', 'King'], ulisses=ulisses, next_screen=map)
-    king_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['King'], ulisses=ulisses, next_screen=map)
-    boss_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Posseidon'], ulisses=ulisses, next_screen=map)
-    cyclop_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Cyclop'], ulisses=ulisses, next_screen=map)
+    ogre_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Ogre'], ulisses=ulisses, next_screen=reward_screen)
+    ogre_and_king_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Ogre', 'King'], ulisses=ulisses, next_screen=reward_screen)
+    king_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['King'], ulisses=ulisses, next_screen=reward_screen)
+    boss_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Posseidon'], ulisses=ulisses, next_screen=reward_screen)
+    cyclop_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Cyclop'], ulisses=ulisses, next_screen=reward_screen)
 
     root = MapNode((220, 450), MapNodeType.STORY, None)
 
