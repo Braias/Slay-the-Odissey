@@ -4,6 +4,7 @@ from entities import Enemy,Ulisses,AnimationState
 import time
 from screen import Screen
 import json
+import pygame.mixer as pm
 
 game_dir = Path(__file__).parent.parent
 cards_json_path = game_dir / "assets" / "cards.json"
@@ -46,10 +47,12 @@ class CombatLevel(Screen):
             self.instantiated_enemies = []
             self.is_player_turn = True
             self.next_screen = next_screen
+
+            self.victory_sound = pm.Sound("sounds/victory_sound.wav")
         except FileNotFoundError as error:
             print(f"{error}: background asset not found in 'assets")
 
-    def draw(self,):
+    def draw(self):
         """Método responsável por desenhar todo cenario e inimigos do estágio
         """
         self.screen.blit(self.background_img,((self.screen.get_width() - self.background_img.get_width()) >> 1,-40))
@@ -175,6 +178,11 @@ class CombatLevel(Screen):
         self.ulisses.absorption_multiplier = 1
         self.ulisses.current_defense = 0
         self.ulisses.current_energy = self.ulisses.max_energy
+        for enemy in self.instantiated_enemies:
+            enemy.current_life = enemy.max_hp
+            img_path = game_dir / "assets" / f"{enemy.name}.png"
+            img = pygame.image.load(img_path)
+            enemy.sprite = pygame.transform.scale(img,(150 * .7,150 * .7))
         
     def update(self):
         all_entities = [self.ulisses] + self.instantiated_enemies
@@ -185,5 +193,6 @@ class CombatLevel(Screen):
             self.execute_enemy_combat_loop()
         self.run_animations()
         if self.check_win():
+            self.victory_sound.play()
             return self.next_screen
 
