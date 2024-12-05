@@ -168,6 +168,9 @@ class EffectCard(Card,ABC):
             elif chosen_effect_type == se.EffectTypes.STRENGTH:
                 dmg_buff = kwargs['damage_percent_buff']
                 return se.Strength(duration,dmg_buff)    
+            elif chosen_effect_type == se.EffectTypes.WEAKNESS:
+                dmg_debuff = kwargs['damage_percent_debuff']
+                return se.Weakness(duration,dmg_debuff)
         except KeyError as error:
             print(f'{error}:inadequate parameters passed for {chosen_effect_type} card - {kwargs}')
 

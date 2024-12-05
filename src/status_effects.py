@@ -65,7 +65,7 @@ class Strength(StatusEffect):
             super().apply_effect()
 
 class Weakness(StatusEffect):
-    def __init__(self, duration, damage_percent_debuff:float):
+    def __init__(self, duration:int, damage_percent_debuff:float):
         super().__init__(duration)
         self.damage_percent_debuff = damage_percent_debuff
 
