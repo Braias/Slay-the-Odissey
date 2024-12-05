@@ -52,7 +52,7 @@ class CombatLevel(Screen):
         except FileNotFoundError as error:
             print(f"{error}: background asset not found in 'assets")
 
-    def draw(self,):
+    def draw(self):
         """Método responsável por desenhar todo cenario e inimigos do estágio
         """
         self.screen.blit(self.background_img,((self.screen.get_width() - self.background_img.get_width()) >> 1,-40))
@@ -178,6 +178,11 @@ class CombatLevel(Screen):
         self.ulisses.absorption_multiplier = 1
         self.ulisses.current_defense = 0
         self.ulisses.current_energy = self.ulisses.max_energy
+        for enemy in self.instantiated_enemies:
+            enemy.current_life = enemy.max_hp
+            img_path = game_dir / "assets" / f"{enemy.name}.png"
+            img = pygame.image.load(img_path)
+            enemy.sprite = pygame.transform.scale(img,(150 * .7,150 * .7))
         
     def update(self):
         all_entities = [self.ulisses] + self.instantiated_enemies
