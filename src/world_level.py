@@ -47,8 +47,6 @@ class CombatLevel(Screen):
             self.instantiated_enemies = []
             self.is_player_turn = True
             self.next_screen = next_screen
-
-            self.victory_sound = pm.Sound("sounds/victory_sound.wav")
         except FileNotFoundError as error:
             print(f"{error}: background asset not found in 'assets")
 
@@ -193,7 +191,6 @@ class CombatLevel(Screen):
             self.execute_enemy_combat_loop()
         self.run_animations()
         if self.check_win():
-            self.victory_sound.play()
             return self.next_screen
 
 class RewardScreen(Screen):
