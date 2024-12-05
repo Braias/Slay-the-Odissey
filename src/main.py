@@ -6,7 +6,7 @@ import pygame
 
 # Temporário ---------------------
 from entities import Ulisses
-from world_level import CombatLevel
+from world_level import CombatLevel,RewardScreen
 from map import MapScreen
 from map_node import MapNode, MapNodeType
 from fireplace import FireplaceScreen
@@ -17,12 +17,10 @@ def init(surface: pygame.Surface):
 
     map = MapScreen(surface)
     #fireplace = FireplaceScreen(surface, map, 20, ulisses)
-    combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Ogre'], ulisses=ulisses, next_screen=map)
-    new_combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Ogre'], ulisses=ulisses, next_screen=map)
-
+    first_reward = RewardScreen(surface=surface,ulisses=ulisses,next_screen=map)
+    combat = CombatLevel(surface, background_name="combat_bg", staged_enemies=['Fairy'], ulisses=ulisses, next_screen=first_reward)
     root = MapNode((220, 450), MapNodeType.STORY, None)
     child = MapNode((200, 350), MapNodeType.BATTLE, combat)
-    child.add_children(MapNode((250, 270), MapNodeType.BATTLE, new_combat))
 
     root.add_children(child)
 

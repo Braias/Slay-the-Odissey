@@ -1,7 +1,7 @@
 from pathlib import Path
 import pygame
 from entities import Enemy,Ulisses,AnimationState
-import time
+import random
 from screen import Screen
 import json
 
@@ -49,7 +49,7 @@ class CombatLevel(Screen):
         except FileNotFoundError as error:
             print(f"{error}: background asset not found in 'assets")
 
-    def draw(self,):
+    def draw(self):
         """Método responsável por desenhar todo cenario e inimigos do estágio
         """
         self.screen.blit(self.background_img,((self.screen.get_width() - self.background_img.get_width()) >> 1,-40))
@@ -187,3 +187,43 @@ class CombatLevel(Screen):
         if self.check_win():
             return self.next_screen
 
+class RewardScreen(Screen):
+    def __init__(self,surface:pygame.surface,ulisses:Ulisses,next_screen:Screen):
+        self.ulisses = ulisses 
+        self.next_screen = next_screen
+        self.surface = surface
+        self.reward_name = "---DEFAULT----"
+        self.reward = None
+        self.screen_ended = False
+
+
+    def randomize_reward(self):
+        reward_cards = list(default_card_configurations['cards'].keys())
+        reward_id = random.choice(reward_cards)
+        self.reward_name = reward_id.replace("_"," ")
+        return reward_id
+    
+    def onenter(self):
+        try:
+            self.reward = self.ulisses.deck.add_single_card(self.randomize_reward())
+        except FileNotFoundError as error:
+            print(f"{error}: Assest for rewarded card unavailable")
+        finally:
+            surface_size = pygame.Vector2(self.surface.get_size())
+            font = pygame.font.SysFont("Times New Roman", 16)
+            self.text_surface = font.render(f"""Você Ganhou {self.reward_name} -- 'E' para voltar ao mapa""", False, (255,255,255))
+            self.text_pos = (surface_size + (-self.text_surface.get_width(), 100)) / 2
+
+    def draw(self):
+        if self.reward:
+            self.reward.rect.center = self.surface.get_rect().center
+            self.surface.blit(self.reward.sprite,self.reward.rect)
+            self.surface.blit(self.text_surface, dest=self.text_pos)
+
+    def handle_event(self, event):
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
+            self.screen_ended = True
+
+    def update(self):
+        if self.screen_ended:
+            return self.next_screen

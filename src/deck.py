@@ -33,7 +33,7 @@ class Deck:
     """
     def __init__(self,draw_pile_ids=[]):
         self.hand = []
-        self.draw_pile= self.build_draw_pile(draw_pile_ids)
+        self.draw_pile = self.build_draw_pile(draw_pile_ids)
         self.discard_pile = []
         self.exhaust_pile =[]
         self.owner = None
@@ -140,3 +140,8 @@ class Deck:
         for each_card in args:
             self.hand.remove(each_card)
             self.discard_pile.append(each_card)
+    
+    def add_single_card(self,card_id:str) -> cards.Card:
+        new_card = self.build_draw_pile(draw_pile_ids=[card_id])
+        self.draw_pile.append(new_card[0])
+        return new_card[0]
