@@ -6,7 +6,7 @@ import pygame
 
 # Temporário ---------------------
 from entities import Ulisses
-from world_level import CombatLevel
+from world_level import CombatLevel,RewardScreen
 from map import MapScreen
 from map_node import MapNode, MapNodeType
 from fireplace import FireplaceScreen

@@ -54,7 +54,7 @@ class Entity():
 
             img_path = game_dir / "assets" / f"{self.name}.png"
             img = pygame.image.load(img_path)
-            self.sprite = pygame.transform.scale(img,(150 * .7,150 * .7)) # fixa as dimensões de todas as entidades em quadrados de 150x150
+            self.sprite = pygame.transform.scale(img,(100 * .7,100 * .7)) # fixa as dimensões de todas as entidades em quadrados de 150x150
 
             self.max_energy = entity_info['max_energy']
             self.current_energy = entity_info['max_energy']
@@ -95,8 +95,8 @@ class Entity():
     def draw_status_bar(self, screen: pygame.display):
         if self.check_is_alive():
             # Coordenadas Base e dimensoes para retangulos - deslocados para canto esquero do personagem
-            x, y = self.x_pos - 62, self.y_pos - 50
-            background_width = 75
+            x, y = self.x_pos - 62, self.y_pos - 35
+            background_width = 65
 
             # Rendereizando fonte e calculando tamanho de cada barra
             hp_text_img = pygame.font.Font("assets/pixel_font.ttf", 9).render(f'{self.current_life}/{self.max_hp}', True, 'white')
@@ -128,7 +128,7 @@ class Entity():
 
     def attack_animate(self,invert_direction:bool):
         duration_ms = 400
-        x_displacement = 15
+        x_displacement = 10
         direction = (-1) ** (int(invert_direction))
 
         current_time = pygame.time.get_ticks()
