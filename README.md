@@ -14,3 +14,7 @@ Certifique-se de ter o Python instalado em sua máquina. Este projeto usa biblio
    cd slay-the-odyssey
    pip install -r requirements.txt
    python main.py
+
+## Assets
+
+Todos as sprites foram desenhadas por membros do grupo, utilizando ferramentas como Aseprite
