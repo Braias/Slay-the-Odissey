@@ -2,6 +2,9 @@
 
 
 import pygame
+from pygame import Surface
+from pygame.event import Event
+from pygame.math import Vector2, clamp
 from map_node import MapNode, MapNodeType, Point
 import math
 import random
@@ -13,9 +16,30 @@ MARGIN = 20
 
 
 class MapScreen(Screen):
-    def __init__(self, surface: pygame.Surface):
+    """ Tela responsável por exibir o mapa do jogo.
+
+        Atributos:
+            pos (Vector2): O vetor com a posição do canto superior esquerdo do
+                mapa na tela.
+            surface (Surface): A superfície no qual a tela será desenhada.
+            hovered_node (MapNode): O nó que o jogador está selecionando com o
+                mouse.
+            current_node (MapNode): O nó em que o jogador está.
+            choosen_node (MapNode): O nó que o jogador selecionou. Usado para
+                retornar da método `update` a próxima tela do jogo, já que o
+                código que identifica a seleção do jogador fica em outro lugar.
+            dragging (bool): Indica se o jogador está "scrollando" o mapa com
+                o mouse (segurando o botão primário e arrastando).
+            scroll_initial_y (int): A coordenada do mouse quando o jogador
+                começou a scrollar com o botão primário.
+            scroll_interval (int): Indica o limite no scroll do jogador,
+                calculado a partir do tamanho do mapa e de uma margem fixa.
+    """
+
+    def __init__(self, surface: Surface):
+        """ Construtor da classe. """
         self._load_sprites()
-        self.pos = pygame.math.Vector2(surface.get_size())
+        self.pos = Vector2(surface.get_size())
         self.pos -= self.map_sprite.get_size()
         self.pos /= 2
 
@@ -29,8 +53,18 @@ class MapScreen(Screen):
         self.scroll_initial_y = 0
         self.scroll_interval = (self.pos.y * 2 - MARGIN, MARGIN)
 
+
     def load(self, root: MapNode):
-        def add_children(n):
+        """ Define o mapa (nós e arestas) que será usado nessa tela. Esse método
+            sempre deve ser chamado antes do jogo iniciar.
+
+            Parâmetros:
+                root (MapNode): o nó de início do mapa a ser usado. Além desse
+                    nó, todos conectados a ele também serão inclusos no
+                    conjunto; exceto os anteriores, caso existam.
+        """
+
+        def add_children(n): # Função auxiliar; não critique, ficou bom :>
             self.nodes.update(n.children)
             for child in n.children:
                 add_children(child)
@@ -44,7 +78,8 @@ class MapScreen(Screen):
         for node in self.nodes:
             self._bake_trail(node)
 
-    def handle_event(self, ev: pygame.event.Event):
+
+    def handle_event(self, ev: Event):
         if ev.type == pygame.MOUSEMOTION:
             self._mouse_motion(ev.dict["pos"])
 
@@ -56,17 +91,19 @@ class MapScreen(Screen):
 
         elif ev.type == pygame.MOUSEWHEEL:
             self.hovered_node = None
-            self.pos.y = pygame.math.clamp(
+            self.pos.y = clamp(
                 self.pos.y + ev.dict["y"] * SCROLL_SPEED,
                 self.scroll_interval[0],
                 self.scroll_interval[1],
             )
+
 
     def update(self):
         if self.choosen_node != None:
             tmp = self.choosen_node.screen
             self.choosen_node = None
             return tmp
+
 
     def draw(self):
         self.surface.fill((0,0,0))
@@ -75,18 +112,20 @@ class MapScreen(Screen):
         for node in self.nodes:
             self._render_node(node)
 
+
     def onenter(self):
         # Torna o nó atual visível na região inferior da tela, alterando a posição
         # Y em que o mapa é desenhado
-        self.pos.y = pygame.math.clamp(
+        self.pos.y = clamp(
             (self.surface.get_height() * 3/4) - self.current_node.pos.y,
             self.scroll_interval[0],
             self.scroll_interval[1],
         )
 
+
     def _mouse_motion(self, mouse_pos: Point):
         if self.dragging:
-            self.pos.y = pygame.math.clamp(
+            self.pos.y = clamp(
                 mouse_pos[1] - self.scroll_initial_y,
                 self.scroll_interval[0],
                 self.scroll_interval[1],
@@ -103,6 +142,7 @@ class MapScreen(Screen):
 
         self.hovered_node = None
 
+
     def _mouse_down(self, mouse_pos: Point, button: int):
         if button != 1: return
         
@@ -118,9 +158,11 @@ class MapScreen(Screen):
             self.dragging = True
             self.scroll_initial_y = mouse_pos[1] - self.pos.y
 
+
     def _mouse_up(self, mouse_pos: Point, button: int):
         if button == 1:
             self.dragging = False
+
 
     def _load_sprites(self):
         self.map_sprite = pygame.image.load("assets/map_bg.png").convert_alpha()
@@ -150,6 +192,7 @@ class MapScreen(Screen):
 
         self.trail_marks_sprite = pygame.image.load("assets/map_trail_marks.png").convert_alpha()
 
+
     # Desenha as arestas entre um nó e todos os seus "filhos". O desenho é feito
     # diretamente na textura do mapa ao invés de na tela, o que evita que as
     # arestas precisem ser renderizadas novamente em cada frame
@@ -167,7 +210,7 @@ class MapScreen(Screen):
             angle_idx = math.floor(.5 - math.atan2(diff.y, diff.x) * 12 / math.pi)
 
             num_marks = math.floor(distance / 16)
-            inc = diff / num_marks if num_marks != 0 else pygame.math.Vector2(0, 0)
+            inc = diff / num_marks if num_marks != 0 else Vector2(0, 0)
 
             for i in range(num_marks + 1):
                 x = (int(origin.pos.x) + i) % 4 # Variações
@@ -180,8 +223,9 @@ class MapScreen(Screen):
                     sprite = pygame.transform.rotate(sprite, 90)
 
                 p = start + inc * i if num_marks > 0 else (start + end) / 2
-                s = pygame.math.Vector2(sprite.get_size())
+                s = Vector2(sprite.get_size())
                 self.map_sprite.blit(sprite, p - s / 2)
+
 
     # Renderiza um único nó
     def _render_node(self, node: MapNode):
@@ -196,6 +240,7 @@ class MapScreen(Screen):
         sprite = self.node_sprites[sprite_id]
         w, h = sprite.get_size()
         self.surface.blit(sprite, node.pos - (w >> 1, h >> 1) + self.pos)
+
 
     # O raio de um nó. Usado para detecção do hover do mouse e para saber até
     # onde desenhar os caminhos que incidem no nó em `_bake_trail`
