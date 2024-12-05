@@ -218,6 +218,7 @@ class RewardScreen(Screen):
         except FileNotFoundError as error:
             print(f"{error}: Assest for rewarded card unavailable")
         finally:
+            self.screen_ended = False
             surface_size = pygame.Vector2(self.surface.get_size())
             font = pygame.font.SysFont("Times New Roman", 16)
             self.text_surface = font.render(f"""Você Ganhou {self.reward_name} -- 'E' para voltar ao mapa""", False, (255,255,255))
